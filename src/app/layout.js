@@ -1,0 +1,29 @@
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+import BGMPlayer from '../components/BGMPlayer';
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata = {
+  title: "MemeChess | The Ultimate Brainrot Chess",
+  description: "Play chess with viral meme skins, sounds, and earn MemeCoins.",
+};
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body>
+        {children}
+        <BGMPlayer />
+      </body>
+    </html>
+  );
+}
