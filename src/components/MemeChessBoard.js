@@ -420,13 +420,13 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
           // Apply thick pixel art black outlines & solid offset shadow to look EXACTLY like high-end retro assets
           pieceDisplay = (
             <span style={{ 
-              fontSize: '2.5rem', 
+              fontSize: 'clamp(1.2rem, 5vw, 2.5rem)',
               fontWeight: '900',
               color: activePack === 'classic' ? (isWhitePiece ? '#ffffff' : '#111827') : 'inherit',
               userSelect: 'none', 
               // Perfect 8-bit black stroke outline + solid drop shadow
               textShadow: '2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000, 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000',
-              filter: 'drop-shadow(3px 3px 0px rgba(0,0,0,0.95))',
+              filter: 'drop-shadow(2px 2px 0px rgba(0,0,0,0.95))',
               lineHeight: 1,
               display: 'flex',
               alignItems: 'center',
@@ -581,9 +581,12 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
     );
   }
 
+  // Responsive: detect mobile to adjust font sizes
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+
   return (
-    <div style={{ width:'100%', maxWidth:850, margin:'0 auto', display:'grid', gridTemplateColumns: '1fr 280px', gap: 20 }}>
-      <div>
+    <div style={{ width:'100%', maxWidth:900, margin:'0 auto', display:'flex', flexDirection:'column', gap: 16 }}>
+      <div style={{ width: '100%' }}>
         {/* AI Speech Bubble */}
         <div style={{ background:'rgba(99,102,241,0.1)', border:'1px solid rgba(99,102,241,0.2)', borderRadius:12, padding:'10px 14px', marginBottom:10, display:'flex', alignItems:'center', gap:10 }}>
           <span style={{ fontSize:'1.4rem' }}>🤖</span>
@@ -645,23 +648,22 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
         )}
       </div>
 
-      {/* Side Panel: Match details */}
-      <div className="glass-panel" style={{ padding: 15, display: 'flex', flexDirection: 'column', height: '100%', maxHeight: 580, overflowY: 'auto' }}>
-        <h3 style={{ fontSize: '1.1rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: 6, marginBottom: 10 }}>Move Log</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: '40px 1fr 1fr', gap: '4px', fontSize: '0.85rem', color: '#c7d2fe' }}>
+      {/* Side Panel: Move Log — stacks below board on mobile */}
+      <div className="glass-panel" style={{ padding: 15, display: 'flex', flexDirection: 'column', maxHeight: 260, overflowY: 'auto', boxSizing: 'border-box' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: 8, marginBottom: 10 }}>
+          <h3 style={{ fontSize: '1rem', margin: 0 }}>📋 Move Log</h3>
+          <button onClick={() => setPlayerColor(null)} style={{ background:'rgba(239,68,68,0.12)', border:'1px solid rgba(239,68,68,0.35)', color:'#f87171', padding:'4px 12px', borderRadius:8, cursor:'pointer', fontSize:'0.8rem', fontWeight:700 }}>
+            🏳️ Resign
+          </button>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '36px 1fr 1fr', gap: '4px 8px', fontSize: '0.82rem', color: '#c7d2fe', overflowY: 'auto' }}>
           {Array.from({ length: Math.ceil(moveHistory.length / 2) }).map((_, i) => (
             <div key={i} style={{ display: 'contents' }}>
-              <span style={{ opacity: 0.6 }}>{i + 1}.</span>
-              <span>{moveHistory[i * 2]}</span>
-              <span>{moveHistory[i * 2 + 1] || ''}</span>
+              <span style={{ opacity: 0.5 }}>{i + 1}.</span>
+              <span style={{ fontWeight: 600 }}>{moveHistory[i * 2]}</span>
+              <span style={{ opacity: 0.75 }}>{moveHistory[i * 2 + 1] || ''}</span>
             </div>
           ))}
-        </div>
-        
-        <div style={{ marginTop: 'auto', paddingTop: 15, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-          <button onClick={() => setPlayerColor(null)} className="btn-secondary" style={{ width: '100%', fontSize: '0.85rem' }}>
-            Flag Match (Resign)
-          </button>
         </div>
       </div>
     </div>
