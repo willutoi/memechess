@@ -183,7 +183,7 @@ MIT — do whatever you want, just don't pretend you made it from scratch 💀
 
 <div align="center">
 
-Made with 🍷 and 🗿 by **willutoi**
+Made with 🍷 and 🗿 by inst: **@willutoi**
 
 *«14,000,605 futures. You lose in ALL of them.»*
 
