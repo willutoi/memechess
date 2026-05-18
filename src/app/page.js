@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Play, Store, Trophy, LogIn } from 'lucide-react';
+import { Play, Store, Trophy, LogIn, Shield } from 'lucide-react';
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -116,6 +116,14 @@ export default function Home() {
               </button>
             </Link>
           </div>
+
+          {user.username.toLowerCase() === 'admin' && (
+            <Link href="/admin" style={{ width: '100%' }}>
+              <button style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '10px', borderRadius: '10px', background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.35)', color: '#f87171', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 700 }}>
+                <Shield size={18} /> Admin Panel
+              </button>
+            </Link>
+          )}
         </div>
       </div>
 
