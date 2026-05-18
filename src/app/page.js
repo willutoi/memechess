@@ -7,11 +7,14 @@ import { Play, Store, Trophy, LogIn, Shield } from 'lucide-react';
 export default function Home() {
   const [user, setUser] = useState(null);
   const [usernameInput, setUsernameInput] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('memechess_user');
     if (storedUser) {
       fetchUser(storedUser);
+    } else {
+      setIsLoading(false);
     }
 
     const handleUpdate = () => {
@@ -23,6 +26,7 @@ export default function Home() {
   }, []);
 
   const fetchUser = async (username) => {
+    setIsLoading(true);
     try {
       const res = await fetch(`/api/user?username=${username}`);
       if (res.ok) {
@@ -31,6 +35,8 @@ export default function Home() {
       }
     } catch (e) {
       console.error(e);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -56,6 +62,18 @@ export default function Home() {
     localStorage.removeItem('memechess_user');
     setUser(null);
   };
+
+  if (isLoading) {
+    return (
+      <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem', animation: 'spin 1s linear infinite' }}>♟️</div>
+          <p style={{ color: '#818cf8', fontWeight: 600 }}>Loading MemeChess...</p>
+          <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+        </div>
+      </main>
+    );
+  }
 
   if (!user) {
     return (
