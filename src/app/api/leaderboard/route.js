@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { getPrisma } from '@/lib/db';
 import { NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
 
 const ELO_BOTS = [
   { username: 'StockBot_Sigma', elo: 2850, wins: 999, games_played: 1000, meme_coins: 9999999 },
@@ -20,6 +18,7 @@ const COIN_BOTS = [
 
 export async function GET(req) {
   try {
+    const prisma = await getPrisma();
     const { searchParams } = new URL(req.url);
     const tab = searchParams.get('tab') || 'elo';
 

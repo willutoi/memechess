@@ -1,10 +1,9 @@
-import { PrismaClient } from '@prisma/client';
+import { getPrisma } from '@/lib/db';
 import { NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
 
 export async function POST(req) {
   try {
+    const prisma = await getPrisma();
     const { username, pack_name, price, type } = await req.json();
 
     if (!username || !pack_name) {

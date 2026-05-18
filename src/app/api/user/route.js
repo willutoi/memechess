@@ -1,10 +1,9 @@
-import { PrismaClient } from '@prisma/client';
+import { getPrisma } from '@/lib/db';
 import { NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
 
 export async function GET(req) {
   try {
+    const prisma = await getPrisma();
     const { searchParams } = new URL(req.url);
     const username = searchParams.get('username');
 

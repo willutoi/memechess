@@ -1,21 +1,18 @@
-import { PrismaClient } from '@prisma/client';
+import { getPrisma } from '@/lib/db';
 import { NextResponse } from 'next/server';
 
-const prisma = new PrismaClient();
-
-// ELO calculation
 function calcElo(playerElo, opponentElo, score) {
   const K = 32;
   const expected = 1 / (1 + Math.pow(10, (opponentElo - playerElo) / 400));
   return Math.round(playerElo + K * (score - expected));
 }
 
-// Difficulty → fake AI ELO
 const DIFF_ELO = { beginner: 800, intermediate: 1500, hard: 2200 };
 
 export async function POST(req) {
   try {
-    const { username, result, difficulty } = await req.json(); // result: 'win' | 'loss' | 'draw'
+    const prisma = await getPrisma();
+    const { username, result, difficulty } = await req.json();
     if (!username || !result || !difficulty) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
     }
