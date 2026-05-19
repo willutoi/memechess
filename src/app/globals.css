@@ -1,13 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --background: #f5f5f0; /* warm off-white */
-  --foreground: #0f172a; /* deep slate-900 */
-  --accent-primary: #ff6b6b; /* bright coral */
-  --accent-secondary: #4d96ff; /* electric blue */
-  --accent-green: #6bc4a6; /* sage green */
-  --accent-purple: #a855f7; /* lavender purple */
-  --border-dark: #0f172a;
+  --background: #fafaf9; /* warm off-white */
+  --foreground: #1c1917; /* soft stone-900 */
+  --accent-primary: #f43f5e; /* soft premium rose */
+  --accent-secondary: #3b82f6; /* electric blue */
+  --accent-green: #10b981; /* soft green */
+  --accent-purple: #8b5cf6; /* soft purple */
+  --border-dark: #e7e5e4; /* stone-200, soft border */
+  --surface: #ffffff;
 }
 
 * {
@@ -25,8 +26,8 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   min-height: 100vh;
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(255, 107, 107, 0.03), transparent 25%),
-    radial-gradient(circle at 90% 80%, rgba(77, 150, 255, 0.03), transparent 25%);
+    radial-gradient(circle at 10% 20%, rgba(244, 63, 94, 0.02), transparent 25%),
+    radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.02), transparent 25%);
   background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
 }
@@ -42,14 +43,20 @@ a {
   text-decoration: none;
 }
 
-/* Neo-brutalist Panel */
+/* Neo-brutalist Panel (Soften version) */
 .neo-panel {
-  background: #ffffff;
-  border: 3px solid var(--border-dark);
-  box-shadow: 6px 6px 0px 0px var(--border-dark);
+  background: var(--surface);
+  border: 1px solid var(--border-dark);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.01), 
+              0 4px 16px rgba(0, 0, 0, 0.03);
   border-radius: 16px;
   position: relative;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.neo-panel:hover {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.01), 
+              0 6px 20px rgba(0, 0, 0, 0.05);
 }
 
 /* Form Inputs */
@@ -57,38 +64,38 @@ input[type="text"],
 input[type="password"] {
   width: 100%;
   padding: 14px 16px;
-  border-radius: 10px;
-  background: #ffffff;
-  border: 2px solid var(--border-dark);
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border-dark);
   color: var(--foreground);
   font-size: 0.95rem;
   outline: none;
   font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  transition: all 0.15s ease-in-out;
-  box-shadow: 2px 2px 0px 0px var(--border-dark);
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 input[type="text"]:focus,
 input[type="password"]:focus {
-  background: #ffffff;
-  transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0px 0px var(--border-dark);
+  background: var(--surface);
+  border-color: var(--accent-secondary);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
 }
 
-/* Neo-brutalist Primary Button */
+/* Primary Button (Soft hover & shadow glow) */
 .btn-primary {
   background: var(--accent-primary);
   color: #ffffff;
-  border: 3px solid var(--border-dark);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   padding: 12px 24px;
   border-radius: 12px;
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.98rem;
   cursor: pointer;
-  transition: all 0.1s ease;
-  box-shadow: 4px 4px 0px 0px var(--border-dark);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.12);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -96,33 +103,36 @@ input[type="password"]:focus {
 }
 
 .btn-primary:hover:not(:disabled) {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px 0px var(--border-dark);
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 20px rgba(244, 63, 94, 0.2);
+  filter: brightness(1.03);
 }
 
 .btn-primary:active:not(:disabled) {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0px 0px var(--border-dark);
+  transform: translateY(0.5px);
+  box-shadow: 0 2px 6px rgba(244, 63, 94, 0.12);
 }
 
 .btn-primary:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
-/* Neo-brutalist Secondary Button */
+/* Secondary Button */
 .btn-secondary {
-  background: #ffffff;
+  background: var(--surface);
   color: var(--foreground);
-  border: 3px solid var(--border-dark);
+  border: 1px solid var(--border-dark);
   padding: 12px 24px;
   border-radius: 12px;
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.98rem;
   cursor: pointer;
-  transition: all 0.1s ease;
-  box-shadow: 4px 4px 0px 0px var(--border-dark);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.01),
+              0 3px 8px rgba(0, 0, 0, 0.02);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -130,55 +140,64 @@ input[type="password"]:focus {
 }
 
 .btn-secondary:hover:not(:disabled) {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px 0px var(--border-dark);
+  transform: translateY(-1.5px);
+  border-color: rgba(28, 25, 23, 0.2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.01),
+              0 6px 16px rgba(0, 0, 0, 0.04);
+  background: #fafaf9;
 }
 
 .btn-secondary:active:not(:disabled) {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0px 0px var(--border-dark);
+  transform: translateY(0.5px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.01),
+              0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
-/* Sticker system */
+/* Sticker system (Modern soft pastel tags) */
 .neo-sticker {
   position: absolute;
-  padding: 6px 12px;
-  border: 2px solid var(--border-dark);
-  box-shadow: 3px 3px 0px 0px var(--border-dark);
+  padding: 4px 10px;
+  border: 1px solid rgba(28, 25, 23, 0.06);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
   font-family: 'Space Grotesk', sans-serif;
-  font-weight: 800;
-  font-size: 0.75rem;
+  font-weight: 700;
+  font-size: 0.72rem;
   border-radius: 8px;
   z-index: 10;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.03em;
   user-select: none;
   pointer-events: none;
 }
 
 .sticker-pink {
-  background: #ff79c6;
-  color: #fff;
+  background: #fdf2f8;
+  color: #db2777;
+  border-color: #fbcfe8;
 }
 
 .sticker-yellow {
-  background: #ffb86c;
-  color: #000;
+  background: #fffbeb;
+  color: #d97706;
+  border-color: #fef3c7;
 }
 
 .sticker-cyan {
-  background: #8be9fd;
-  color: #000;
+  background: #f0f9ff;
+  color: #0284c7;
+  border-color: #e0f2fe;
 }
 
 .sticker-green {
-  background: #50fa7b;
-  color: #000;
+  background: #f0fdf4;
+  color: #16a34a;
+  border-color: #dcfce7;
 }
 
 .sticker-purple {
-  background: #bd93f9;
-  color: #fff;
+  background: #faf5ff;
+  color: #7c3aed;
+  border-color: #f3e8ff;
 }
 
 /* Header Text Gradient */
