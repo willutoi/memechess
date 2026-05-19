@@ -89,3 +89,19 @@ a {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* Play Board Responsive Split Grid */
+.board-grid-wrapper {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 20px;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .board-grid-wrapper {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+

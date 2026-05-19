@@ -70,9 +70,17 @@ function evaluateBoard(board) {
   return score;
 }
 
-export default function MemeChessBoard({ activePack = 'classic', activeAudioPack = 'classic' }) {
+const TIME_CONTROLS = [
+  { label: '1+0', name: 'Bullet', seconds: 60 },
+  { label: '3+2', name: 'Blitz', seconds: 180 },
+  { label: '10+0', name: 'Rapid', seconds: 600 },
+  { label: '∞', name: 'Classical', seconds: 0 },
+];
+
+export default function MemeChessBoard({ activePack = 'classic', activeAudioPack = 'classic', username = '' }) {
   const [playerColor, setPlayerColor] = useState(null);
   const [difficulty, setDifficulty] = useState('beginner');
+  const [timeControl, setTimeControl] = useState(TIME_CONTROLS[2]); // Rapid default
   
   const [game, setGame] = useState(new Chess());
   const [gameStatus, setGameStatus] = useState('');
@@ -83,7 +91,7 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
   const [moveFrom, setMoveFrom] = useState('');
   const [optionSquares, setOptionSquares] = useState({});
 
-  // Chess clocks (10 minutes each)
+  // Chess clocks
   const [playerTime, setPlayerTime] = useState(600);
   const [aiTime, setAiTime] = useState(600);
   const [gameActive, setGameActive] = useState(false);
@@ -92,6 +100,20 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
   const [moveHistory, setMoveHistory] = useState([]);
   const [capturedWhite, setCapturedWhite] = useState([]);
   const [capturedBlack, setCapturedBlack] = useState([]);
+
+  // Game duration tracking
+  const gameStartTimeRef = useRef(null);
+
+  // Toast notifications
+  const [toasts, setToasts] = useState([]);
+  const addToast = useCallback((text, color = '#6366f1') => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, text, color }]);
+    setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 4000);
+  }, []);
+
+  // Post-game reward notification state
+  const [rewardPopup, setRewardPopup] = useState(null);
 
   // ── Sounds Ref
   const soundsRef = useRef({});
@@ -154,17 +176,30 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
   }, [gameActive, playerColor, game, playSound]);
 
   // Record ELO in DB
-  const recordGameResult = async (res) => {
+  const recordGameResult = async (res, finalMoveCount) => {
     const storedUser = localStorage.getItem('memechess_user');
     if (!storedUser) return;
+    const duration = gameStartTimeRef.current ? Math.floor((Date.now() - gameStartTimeRef.current) / 1000) : 0;
     try {
       const response = await fetch('/api/game-result', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: storedUser, result: res, difficulty })
+        body: JSON.stringify({ username: storedUser, result: res, difficulty, moveCount: finalMoveCount || 0, duration })
       });
       if (response.ok) {
+        const data = await response.json();
         window.dispatchEvent(new CustomEvent('memechess_user_updated'));
+        // Show reward popup
+        const msgs = [];
+        if (data.coinsGained > 0) msgs.push(`+${data.coinsGained} 🪙 MemeCoins`);
+        const eloSign = data.eloChange >= 0 ? '+' : '';
+        msgs.push(`${eloSign}${data.eloChange} ELO`);
+        if (data.questRewards > 0) msgs.push(`Quest bonus: +${data.questRewards} 🪙`);
+        if (data.newAchievements?.length) {
+          data.newAchievements.forEach(a => addToast(`🏆 Achievement unlocked: ${a.icon} ${a.title}`, '#fbbf24'));
+        }
+        setRewardPopup(msgs);
+        setTimeout(() => setRewardPopup(null), 6000);
       }
     } catch (e) {
       console.error(e);
@@ -280,24 +315,27 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
   // Start Game Handler
   const startGame = useCallback((color) => {
     const newGame = new Chess();
+    const startSecs = timeControl.seconds || 0;
     setGame(newGame);
     setPlayerColor(color);
     setGameStatus('');
     setMoveFrom('');
     setOptionSquares({});
-    setPlayerTime(600);
-    setAiTime(600);
+    setPlayerTime(startSecs || 99999);
+    setAiTime(startSecs || 99999);
     setGameActive(true);
     setMoveHistory([]);
     setCapturedWhite([]);
     setCapturedBlack([]);
+    setRewardPopup(null);
+    gameStartTimeRef.current = Date.now();
 
     if (color === 'b') {
       makeAIMove(newGame);
     } else {
       setAiThinking(false);
     }
-  }, [makeAIMove]);
+  }, [makeAIMove, timeControl]);
 
   // Execute Move
   const executeMove = useCallback((from, to) => {
@@ -420,7 +458,7 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
           // Apply thick pixel art black outlines & solid offset shadow to look EXACTLY like high-end retro assets
           pieceDisplay = (
             <span style={{ 
-              fontSize: 'clamp(1.2rem, 5vw, 2.5rem)',
+              fontSize: 'clamp(1.5rem, 8.5vw, 2.5rem)',
               fontWeight: '900',
               color: activePack === 'classic' ? (isWhitePiece ? '#ffffff' : '#111827') : 'inherit',
               userSelect: 'none', 
@@ -541,23 +579,40 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
           <div style={{ fontSize:'3.5rem', marginBottom:'0.5rem' }}>👑</div>
           <h2 className="text-gradient" style={{ fontSize:'2rem', fontWeight:800, marginBottom:'1rem' }}>MemeChess Arena</h2>
           
+          <div style={{ marginBottom: '1.5rem' }}>
+            <p style={{ color:'#818cf8', marginBottom:'0.5rem', fontSize:'0.9rem', fontWeight:600 }}>⏱️ TIME CONTROL</p>
+            <div style={{ display:'flex', gap:'0.5rem', justifyContent:'center', flexWrap:'wrap' }}>
+              {TIME_CONTROLS.map(tc => (
+                <button
+                  key={tc.name}
+                  onClick={() => setTimeControl(tc)}
+                  style={{
+                    padding: '8px 14px', borderRadius: 8,
+                    border: '1px solid rgba(251,191,36,0.4)',
+                    background: timeControl.name === tc.name ? 'rgba(251,191,36,0.3)' : 'rgba(251,191,36,0.06)',
+                    color: timeControl.name === tc.name ? '#fbbf24' : '#a5b4fc',
+                    cursor: 'pointer', fontWeight: 700, transition: 'all 0.2s', fontSize: '0.85rem'
+                  }}
+                >
+                  <div>{tc.name}</div>
+                  <div style={{ fontSize: '0.7rem', opacity: 0.7 }}>{tc.label}</div>
+                </button>
+              ))}
+            </div>
+          </div>
           <div style={{ marginBottom: '2rem' }}>
-            <p style={{ color:'#818cf8', marginBottom:'0.5rem', fontSize:'0.9rem', fontWeight:600 }}>CHOOSE AI DIFFICULTY</p>
+            <p style={{ color:'#818cf8', marginBottom:'0.5rem', fontSize:'0.9rem', fontWeight:600 }}>🤖 AI DIFFICULTY</p>
             <div style={{ display:'flex', gap:'0.5rem', justifyContent:'center' }}>
               {['beginner', 'intermediate', 'hard'].map(level => (
                 <button
                   key={level}
                   onClick={() => setDifficulty(level)}
                   style={{
-                    padding: '8px 16px',
-                    borderRadius: 8,
+                    padding: '8px 16px', borderRadius: 8,
                     border: '1px solid rgba(99,102,241,0.4)',
                     background: difficulty === level ? '#6366f1' : 'rgba(99,102,241,0.08)',
                     color: difficulty === level ? '#fff' : '#a5b4fc',
-                    cursor: 'pointer',
-                    fontWeight: 700,
-                    textTransform: 'capitalize',
-                    transition: 'all 0.2s'
+                    cursor: 'pointer', fontWeight: 700, textTransform: 'capitalize', transition: 'all 0.2s'
                   }}
                 >
                   {level}
@@ -585,87 +640,125 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
 
   return (
-    <div style={{ width:'100%', maxWidth:900, margin:'0 auto', display:'flex', flexDirection:'column', gap: 16 }}>
-      <div style={{ width: '100%' }}>
-        {/* AI Speech Bubble */}
-        <div style={{ background:'rgba(99,102,241,0.1)', border:'1px solid rgba(99,102,241,0.2)', borderRadius:12, padding:'10px 14px', marginBottom:10, display:'flex', alignItems:'center', gap:10 }}>
-          <span style={{ fontSize:'1.4rem' }}>🤖</span>
-          <p style={{ margin:0, fontSize:'0.85rem', fontStyle:'italic', color:'#c7d2fe' }}>{aiPhrase}</p>
+    <div className="board-layout-container" style={{ width: '100%', maxWidth: '1000px', margin: '0 auto' }}>
+      <div className="board-grid-wrapper">
+        
+        {/* Left Column: Board and Clocks */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {/* Board Status / Header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '8px 12px', borderRadius: 8 }}>
+            <span style={{ fontSize: '0.85rem', color: '#a5b4fc', fontWeight: 'bold' }}>
+              Opponent (AI): <b style={{ color: game.turn() !== playerColor ? '#fbbf24' : '#fff' }}>{formatTime(aiTime)}</b>
+            </span>
+            <span style={{ fontSize: '0.85rem', textTransform: 'capitalize', color: '#818cf8', fontWeight: 'bold' }}>
+              Difficulty: {difficulty}
+            </span>
+          </div>
+
+          {/* Captured Pieces Black */}
+          <div style={{ display: 'flex', minHeight: 24, gap: 4, opacity: 0.8, fontSize: '1.2rem' }}>
+            {capturedBlack.map((p, idx) => {
+              const skinMap = EMOJI_SKINS[activePack] || EMOJI_SKINS.classic;
+              return <span key={idx}>{skinMap[`b${p.toUpperCase()}`]}</span>;
+            })}
+          </div>
+
+          {/* Responsive Chessboard Container */}
+          <div style={{ 
+            borderRadius: 16, 
+            overflow: 'hidden', 
+            boxShadow: '0 12px 40px rgba(0,0,0,0.6), 0 0 50px rgba(99,102,241,0.25)', 
+            border: '3px solid rgba(99,102,241,0.35)',
+            background: 'rgba(9, 9, 11, 0.9)',
+            width: '100%',
+            maxWidth: '520px',
+            margin: '0 auto'
+          }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', width: '100%' }}>
+              {renderBoard()}
+            </div>
+          </div>
+
+          {/* Captured Pieces White */}
+          <div style={{ display: 'flex', minHeight: 24, gap: 4, opacity: 0.8, fontSize: '1.2rem' }}>
+            {capturedWhite.map((p, idx) => {
+              const skinMap = EMOJI_SKINS[activePack] || EMOJI_SKINS.classic;
+              return <span key={idx}>{skinMap[`w${p.toUpperCase()}`]}</span>;
+            })}
+          </div>
+
+          {/* Footer info & Clocks */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem', fontWeight: 600, background: 'rgba(255,255,255,0.03)', padding: '8px 12px', borderRadius: 8 }}>
+            <span>Your Time: <b style={{ color: game.turn() === playerColor ? '#fbbf24' : '#fff' }}>{formatTime(playerTime)}</b></span>
+            <span style={{ color: '#818cf8' }}>Skin: {activePack}</span>
+          </div>
+
+          {gameStatus && (
+            <div style={{ background: 'rgba(168,85,247,0.25)', border: '1px solid rgba(168,85,247,0.4)', borderRadius: 8, padding: '10px 16px', textAlign: 'center', fontWeight: 700, color: '#e9d5ff' }}>
+              {gameStatus}
+              <button onClick={() => setPlayerColor(null)} style={{ marginLeft: 12, background: 'rgba(99,102,241,0.3)', border: '1px solid #6366f1', color: '#a5b4fc', padding: '4px 12px', borderRadius: 6, cursor: 'pointer', fontSize: '0.82rem' }}>
+                Reset Match
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Board Status / Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, background: 'rgba(255,255,255,0.03)', padding: '6px 12px', borderRadius: 8 }}>
-          <span style={{ fontSize: '0.85rem', color: '#a5b4fc', fontWeight: 'bold' }}>
-            Opponent Time (AI): <b style={{ color: game.turn() !== playerColor ? '#fbbf24' : '#fff' }}>{formatTime(aiTime)}</b>
-          </span>
-          <span style={{ fontSize: '0.85rem', textTransform: 'capitalize', color: '#818cf8', fontWeight: 'bold' }}>
-            Difficulty: {difficulty}
-          </span>
-        </div>
+        {/* Right Column: AI speech bubble and Move Log */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {/* AI Speech Bubble */}
+          <div style={{ background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 12, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontSize: '1.6rem' }}>🤖</span>
+            <p style={{ margin: 0, fontSize: '0.85rem', fontStyle: 'italic', color: '#c7d2fe' }}>{aiPhrase}</p>
+          </div>
 
-        {/* Captured Pieces Black */}
-        <div style={{ display: 'flex', minHeight: 24, gap: 4, marginBottom: 4, opacity: 0.8, fontSize: '1.2rem' }}>
-          {capturedBlack.map((p, idx) => {
-            const skinMap = EMOJI_SKINS[activePack] || EMOJI_SKINS.classic;
-            return <span key={idx}>{skinMap[`b${p.toUpperCase()}`]}</span>;
-          })}
-        </div>
-
-        {/* Responsive Chessboard Container */}
-        <div style={{ 
-          borderRadius: 16, 
-          overflow: 'hidden', 
-          boxShadow: '0 12px 40px rgba(0,0,0,0.6), 0 0 50px rgba(99,102,241,0.25)', 
-          border: '3px solid rgba(99,102,241,0.35)',
-          background: 'rgba(9, 9, 11, 0.9)'
-        }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', width: '100%' }}>
-            {renderBoard()}
+          {/* Side Panel: Move Log */}
+          <div className="glass-panel" style={{ padding: 15, display: 'flex', flexDirection: 'column', flex: 1, minHeight: 220, maxHeight: 360, overflowY: 'auto', boxSizing: 'border-box' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: 8, marginBottom: 10 }}>
+              <h3 style={{ fontSize: '1rem', margin: 0 }}>📋 Move Log</h3>
+              <button onClick={() => setPlayerColor(null)} style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.35)', color: '#f87171', padding: '4px 12px', borderRadius: 8, cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700 }}>
+                🏳️ Resign
+              </button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '36px 1fr 1fr', gap: '6px 8px', fontSize: '0.85rem', color: '#c7d2fe', overflowY: 'auto' }}>
+              {Array.from({ length: Math.ceil(moveHistory.length / 2) }).map((_, i) => (
+                <div key={i} style={{ display: 'contents' }}>
+                  <span style={{ opacity: 0.5 }}>{i + 1}.</span>
+                  <span style={{ fontWeight: 600 }}>{moveHistory[i * 2]}</span>
+                  <span style={{ opacity: 0.75 }}>{moveHistory[i * 2 + 1] || ''}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Captured Pieces White */}
-        <div style={{ display: 'flex', minHeight: 24, gap: 4, marginTop: 4, opacity: 0.8, fontSize: '1.2rem' }}>
-          {capturedWhite.map((p, idx) => {
-            const skinMap = EMOJI_SKINS[activePack] || EMOJI_SKINS.classic;
-            return <span key={idx}>{skinMap[`w${p.toUpperCase()}`]}</span>;
-          })}
-        </div>
-
-        {/* Footer info & Clocks */}
-        <div style={{ marginTop:12, display:'flex', justifyContent:'space-between', alignItems: 'center', fontSize:'0.9rem', fontWeight:600 }}>
-          <span>Your Time: <b style={{ color: game.turn() === playerColor ? '#fbbf24' : '#fff' }}>{formatTime(playerTime)}</b></span>
-          <span style={{ color:'#818cf8' }}>Skin: {activePack}</span>
-        </div>
-
-        {gameStatus && (
-          <div style={{ background:'rgba(168,85,247,0.25)', border:'1px solid rgba(168,85,247,0.4)', borderRadius:8, padding:'10px 16px', textAlign:'center', fontWeight:700, color:'#e9d5ff', marginTop:12 }}>
-            {gameStatus}
-            <button onClick={() => setPlayerColor(null)} style={{ marginLeft:12, background:'rgba(99,102,241,0.3)', border:'1px solid #6366f1', color:'#a5b4fc', padding:'4px 12px', borderRadius:6, cursor:'pointer', fontSize:'0.82rem' }}>
-              Reset Match
-            </button>
-          </div>
-        )}
       </div>
 
-      {/* Side Panel: Move Log — stacks below board on mobile */}
-      <div className="glass-panel" style={{ padding: 15, display: 'flex', flexDirection: 'column', maxHeight: 260, overflowY: 'auto', boxSizing: 'border-box' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: 8, marginBottom: 10 }}>
-          <h3 style={{ fontSize: '1rem', margin: 0 }}>📋 Move Log</h3>
-          <button onClick={() => setPlayerColor(null)} style={{ background:'rgba(239,68,68,0.12)', border:'1px solid rgba(239,68,68,0.35)', color:'#f87171', padding:'4px 12px', borderRadius:8, cursor:'pointer', fontSize:'0.8rem', fontWeight:700 }}>
-            🏳️ Resign
-          </button>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '36px 1fr 1fr', gap: '4px 8px', fontSize: '0.82rem', color: '#c7d2fe', overflowY: 'auto' }}>
-          {Array.from({ length: Math.ceil(moveHistory.length / 2) }).map((_, i) => (
-            <div key={i} style={{ display: 'contents' }}>
-              <span style={{ opacity: 0.5 }}>{i + 1}.</span>
-              <span style={{ fontWeight: 600 }}>{moveHistory[i * 2]}</span>
-              <span style={{ opacity: 0.75 }}>{moveHistory[i * 2 + 1] || ''}</span>
-            </div>
+      {/* Toast Notifications */}
+      <div style={{ position: 'fixed', top: 20, right: 20, display: 'flex', flexDirection: 'column', gap: '0.5rem', zIndex: 999, pointerEvents: 'none' }}>
+        {toasts.map(t => (
+          <div key={t.id} style={{ background: `${t.color}22`, border: `1px solid ${t.color}66`, borderRadius: 10, padding: '10px 16px', color: '#fff', fontWeight: 700, fontSize: '0.9rem', boxShadow: `0 4px 20px ${t.color}44`, animation: 'fadeSlideIn 0.3s ease', maxWidth: 280 }}>
+            {t.text}
+          </div>
+        ))}
+      </div>
+
+      {/* Reward Popup after game ends */}
+      {rewardPopup && (
+        <div style={{ position: 'fixed', bottom: 30, left: '50%', transform: 'translateX(-50%)', background: 'rgba(15,15,20,0.97)', border: '1px solid rgba(99,102,241,0.5)', borderRadius: 14, padding: '1.25rem 2rem', textAlign: 'center', zIndex: 998, boxShadow: '0 12px 40px rgba(0,0,0,0.8)', animation: 'fadeSlideIn 0.4s ease', minWidth: 240 }}>
+          <div style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>🎉</div>
+          <h3 style={{ margin: '0 0 0.5rem', fontSize: '1rem', color: '#a5b4fc' }}>Game Results</h3>
+          {rewardPopup.map((msg, i) => (
+            <p key={i} style={{ margin: '3px 0', fontWeight: 800, color: msg.includes('ELO') ? '#fbbf24' : '#34d399', fontSize: '1rem' }}>{msg}</p>
           ))}
         </div>
-      </div>
+      )}
+
+      <style>{`
+        @keyframes fadeSlideIn {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }

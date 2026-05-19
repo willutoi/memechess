@@ -3,22 +3,33 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 model User {
   id               String   @id @default(cuid())
   username         String   @unique
+  password_hash    String   @default("")
   meme_coins       Int      @default(500)
   elo              Int      @default(1200)
   wins             Int      @default(0)
   losses           Int      @default(0)
+  draws            Int      @default(0)
   games_played     Int      @default(0)
   active_skin_pack String   @default("classic")
   active_audio_pack String  @default("default")
   owned_items      String   @default("classic,default") // comma separated
+  avatar           String   @default("🧠") // emoji avatar
+  country          String   @default("")
+  bio              String   @default("")
+  solved_puzzles   String   @default("") // comma separated solved puzzle keys
   createdAt        DateTime @default(now())
+  last_daily_claim DateTime?
+
+  games        GameHistory[]
+  quests       UserQuest[]
+  achievements UserAchievement[]
 }
 
 model ShopItem {
@@ -26,4 +37,69 @@ model ShopItem {
   pack_name   String   @unique
   price       Int
   type        String   // "skin" or "audio"
+  description String   @default("")
+  preview     String   @default("")
 }
+
+model GameHistory {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  result     String   // "win" | "loss" | "draw"
+  difficulty String
+  eloChange  Int      @default(0)
+  coinsGained Int     @default(0)
+  moveCount  Int      @default(0)
+  duration   Int      @default(0) // seconds
+  pgn        String   @default("")
+  playedAt   DateTime @default(now())
+}
+
+model Quest {
+  id          String      @id @default(cuid())
+  key         String      @unique  // "play_3_games", "win_1_game", etc.
+  title       String
+  description String
+  reward      Int         // MemeCoins
+  target      Int         // how many times to complete
+  type        String      // "daily" | "weekly"
+  userQuests  UserQuest[]
+}
+
+model UserQuest {
+  id        String   @id @default(cuid())
+  userId    String
+  questId   String
+  user      User     @relation(fields: [userId], references: [id])
+  quest     Quest    @relation(fields: [questId], references: [id])
+  progress  Int      @default(0)
+  completed Boolean  @default(false)
+  claimedAt DateTime?
+  assignedAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@unique([userId, questId, assignedAt])
+}
+
+model Achievement {
+  id          String            @id @default(cuid())
+  key         String            @unique
+  title       String
+  description String
+  icon        String
+  reward      Int               @default(0)
+  users       UserAchievement[]
+}
+
+model UserAchievement {
+  id            String      @id @default(cuid())
+  userId        String
+  achievementId String
+  user          User        @relation(fields: [userId], references: [id])
+  achievement   Achievement @relation(fields: [achievementId], references: [id])
+  unlockedAt    DateTime    @default(now())
+
+  @@unique([userId, achievementId])
+}
+
+// ChatMessage is handled client-side only (no DB persistence needed for MVP)
