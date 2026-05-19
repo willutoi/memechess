@@ -136,82 +136,86 @@ export default function AdminPage() {
         />
 
         {/* Real Users Table Panel */}
-        <div className="neo-panel" style={{ padding: '1.5rem', background: '#ffffff', position: 'relative', overflowX: 'auto' }}>
+        <div className="neo-panel" style={{ padding: '1.5rem', background: '#ffffff', position: 'relative', overflow: 'visible' }}>
           {/* Sticker */}
-          <div className="neo-sticker sticker-pink" style={{ top: '-15px', right: '15px', transform: 'rotate(6deg)' }}>👥 REAL USERS</div>
+          <div className="neo-sticker sticker-pink" style={{ top: '-12px', right: '15px', transform: 'rotate(6deg)' }}>👥 REAL USERS</div>
           
           <h2 style={{ fontSize: '1.15rem', fontWeight: 900, marginBottom: '1.2rem', color: 'var(--foreground)' }}>Active Accounts</h2>
-          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
-            <thead>
-              <tr style={{ borderBottom: '2px solid var(--border-dark)' }}>
-                {['User', 'ELO', 'MemeCoins', 'W/L', 'Games', 'Created', 'Action'].map(h => (
-                  <th key={h} style={{ padding: '12px 10px', textAlign: 'left', color: 'var(--foreground-secondary)', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {realUsers.length === 0 && (
-                <tr><td colSpan={7} style={{ padding: '2rem', textAlign: 'center', color: 'var(--foreground-tertiary)', fontWeight: 600 }}>No accounts found...</td></tr>
-              )}
-              {realUsers.map((u, i) => (
-                <tr key={u.id} style={{ borderBottom: '1px solid var(--border-subtle)', background: i % 2 === 0 ? 'transparent' : '#fafafa' }}>
-                  <td style={{ padding: '14px 10px', fontWeight: 800, color: 'var(--foreground)' }}>{u.username}</td>
-                  <td style={{ padding: '14px 10px', color: '#b45309', fontWeight: 900 }}>{u.elo}</td>
-                  <td style={{ padding: '14px 10px', color: '#059669', fontWeight: 800 }}>🪙 {u.meme_coins.toLocaleString()}</td>
-                  <td style={{ padding: '14px 10px', fontWeight: 700 }}><span style={{ color: '#059669' }}>{u.wins}W</span> / <span style={{ color: '#dc2626' }}>{u.losses}L</span></td>
-                  <td style={{ padding: '14px 10px', color: 'var(--foreground-secondary)', fontWeight: 700 }}>{u.games_played}</td>
-                  <td style={{ padding: '14px 10px', color: 'var(--foreground-tertiary)', fontSize: '0.8rem', fontWeight: 600 }}>{new Date(u.createdAt).toLocaleDateString('ru-RU')}</td>
-                  <td style={{ padding: '14px 10px' }}>
-                    <button
-                      onClick={() => handleDelete(u.username)}
-                      style={{
-                        padding: '6px 14px', borderRadius: 8,
-                        background: '#fef2f2', border: '1px solid #fecaca',
-                        color: '#dc2626', cursor: 'pointer', fontSize: '0.8rem',
-                        fontWeight: 800, transition: 'all 0.2s'
-                      }}
-                      onMouseEnter={e => { e.target.style.background = '#fee2e2'; }}
-                      onMouseLeave={e => { e.target.style.background = '#fef2f2'; }}
-                    >
-                      🗑️ Delete
-                    </button>
-                  </td>
+          <div style={{ overflowX: 'auto', width: '100%' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
+              <thead>
+                <tr style={{ borderBottom: '2px solid var(--border-dark)' }}>
+                  {['User', 'ELO', 'MemeCoins', 'W/L', 'Games', 'Created', 'Action'].map(h => (
+                    <th key={h} style={{ padding: '12px 10px', textAlign: 'left', color: 'var(--foreground-secondary)', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {realUsers.length === 0 && (
+                  <tr><td colSpan={7} style={{ padding: '2rem', textAlign: 'center', color: 'var(--foreground-tertiary)', fontWeight: 600 }}>No accounts found...</td></tr>
+                )}
+                {realUsers.map((u, i) => (
+                  <tr key={u.id} style={{ borderBottom: '1px solid var(--border-subtle)', background: i % 2 === 0 ? 'transparent' : '#fafafa' }}>
+                    <td style={{ padding: '14px 10px', fontWeight: 800, color: 'var(--foreground)' }}>{u.username}</td>
+                    <td style={{ padding: '14px 10px', color: '#b45309', fontWeight: 900 }}>{u.elo}</td>
+                    <td style={{ padding: '14px 10px', color: '#059669', fontWeight: 800 }}>🪙 {u.meme_coins.toLocaleString()}</td>
+                    <td style={{ padding: '14px 10px', fontWeight: 700 }}><span style={{ color: '#059669' }}>{u.wins}W</span> / <span style={{ color: '#dc2626' }}>{u.losses}L</span></td>
+                    <td style={{ padding: '14px 10px', color: 'var(--foreground-secondary)', fontWeight: 700 }}>{u.games_played}</td>
+                    <td style={{ padding: '14px 10px', color: 'var(--foreground-tertiary)', fontSize: '0.8rem', fontWeight: 600 }}>{new Date(u.createdAt).toLocaleDateString('ru-RU')}</td>
+                    <td style={{ padding: '14px 10px' }}>
+                      <button
+                        onClick={() => handleDelete(u.username)}
+                        style={{
+                          padding: '6px 14px', borderRadius: 8,
+                          background: '#fef2f2', border: '1px solid #fecaca',
+                          color: '#dc2626', cursor: 'pointer', fontSize: '0.8rem',
+                          fontWeight: 800, transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={e => { e.target.style.background = '#fee2e2'; }}
+                        onMouseLeave={e => { e.target.style.background = '#fef2f2'; }}
+                      >
+                        🗑️ Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* Bots Panel */}
-        <div className="neo-panel" style={{ padding: '1.5rem', background: '#ffffff', position: 'relative', overflowX: 'auto' }}>
+        <div className="neo-panel" style={{ padding: '1.5rem', background: '#ffffff', position: 'relative', overflow: 'visible' }}>
           {/* Sticker */}
-          <div className="neo-sticker sticker-purple" style={{ top: '-15px', right: '15px', transform: 'rotate(-4deg)' }}>🤖 PROTECTED BOTS</div>
+          <div className="neo-sticker sticker-purple" style={{ top: '-12px', right: '15px', transform: 'rotate(-4deg)' }}>🤖 PROTECTED BOTS</div>
 
           <h2 style={{ fontSize: '1.15rem', fontWeight: 900, marginBottom: '1.2rem', color: 'var(--foreground)' }}>Bot Accounts</h2>
-          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '500px' }}>
-            <thead>
-              <tr style={{ borderBottom: '2px solid var(--border-dark)' }}>
-                {['Bot Username', 'ELO', 'MemeCoins', 'Status'].map(h => (
-                  <th key={h} style={{ padding: '12px 10px', textAlign: 'left', color: 'var(--foreground-secondary)', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {bots.length === 0 && (
-                <tr><td colSpan={4} style={{ padding: '2rem', textAlign: 'center', color: 'var(--foreground-tertiary)', fontWeight: 600 }}>No bots found...</td></tr>
-              )}
-              {bots.map((u, i) => (
-                <tr key={u.id} style={{ borderBottom: '1px solid var(--border-subtle)', background: i % 2 === 0 ? 'transparent' : '#fafafa' }}>
-                  <td style={{ padding: '14px 10px', fontWeight: 800, color: 'var(--foreground-secondary)' }}>🤖 {u.username}</td>
-                  <td style={{ padding: '14px 10px', color: 'var(--foreground-tertiary)', fontWeight: 700 }}>{u.elo}</td>
-                  <td style={{ padding: '14px 10px', color: 'var(--foreground-tertiary)' }}>🪙 {u.meme_coins?.toLocaleString()}</td>
-                  <td style={{ padding: '14px 10px' }}>
-                    <span style={{ padding: '4px 10px', borderRadius: 8, background: '#faf5ff', border: '1px solid #e9d5ff', color: '#7c3aed', fontSize: '0.75rem', fontWeight: 800 }}>PROTECTED</span>
-                  </td>
+          <div style={{ overflowX: 'auto', width: '100%' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '500px' }}>
+              <thead>
+                <tr style={{ borderBottom: '2px solid var(--border-dark)' }}>
+                  {['Bot Username', 'ELO', 'MemeCoins', 'Status'].map(h => (
+                    <th key={h} style={{ padding: '12px 10px', textAlign: 'left', color: 'var(--foreground-secondary)', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {bots.length === 0 && (
+                  <tr><td colSpan={4} style={{ padding: '2rem', textAlign: 'center', color: 'var(--foreground-tertiary)', fontWeight: 600 }}>No bots found...</td></tr>
+                )}
+                {bots.map((u, i) => (
+                  <tr key={u.id} style={{ borderBottom: '1px solid var(--border-subtle)', background: i % 2 === 0 ? 'transparent' : '#fafafa' }}>
+                    <td style={{ padding: '14px 10px', fontWeight: 800, color: 'var(--foreground-secondary)' }}>🤖 {u.username}</td>
+                    <td style={{ padding: '14px 10px', color: 'var(--foreground-tertiary)', fontWeight: 700 }}>{u.elo}</td>
+                    <td style={{ padding: '14px 10px', color: 'var(--foreground-tertiary)' }}>🪙 {u.meme_coins?.toLocaleString()}</td>
+                    <td style={{ padding: '14px 10px' }}>
+                      <span style={{ padding: '4px 10px', borderRadius: 8, background: '#faf5ff', border: '1px solid #e9d5ff', color: '#7c3aed', fontSize: '0.75rem', fontWeight: 800 }}>PROTECTED</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
       </div>
