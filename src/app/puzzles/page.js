@@ -262,6 +262,9 @@ export default function PuzzlesPage() {
           );
         }
 
+        const showRankLabel = fIdx === 0;
+        const showFileLabel = rIdx === 7;
+
         boardCells.push(
           <div
             key={squareName}
@@ -287,6 +290,37 @@ export default function PuzzlesPage() {
                 background: 'rgba(239, 68, 68, 0.65)',
                 pointerEvents: 'none'
               }} />
+            )}
+
+            {showRankLabel && (
+              <span style={{
+                position: 'absolute',
+                top: 4,
+                left: 5,
+                fontSize: '0.75rem',
+                fontWeight: '900',
+                color: isDark ? '#ffffff' : '#2c3e2c',
+                pointerEvents: 'none',
+                userSelect: 'none',
+                lineHeight: 1
+              }}>
+                {rank}
+              </span>
+            )}
+            {showFileLabel && (
+              <span style={{
+                position: 'absolute',
+                bottom: 3,
+                right: 5,
+                fontSize: '0.75rem',
+                fontWeight: '900',
+                color: isDark ? '#ffffff' : '#2c3e2c',
+                pointerEvents: 'none',
+                userSelect: 'none',
+                lineHeight: 1
+              }}>
+                {file}
+              </span>
             )}
           </div>
         );

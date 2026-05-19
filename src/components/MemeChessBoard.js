@@ -538,13 +538,13 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
               <span style={{
                 position: 'absolute',
                 top: 4,
-                left: 4,
-                fontSize: '0.62rem',
-                fontWeight: 800,
-                opacity: 0.65,
-                color: isDark ? '#e0e7ff' : '#1e1b4b',
+                left: 5,
+                fontSize: '0.75rem',
+                fontWeight: '900',
+                color: isDark ? '#ffffff' : '#2c3e2c',
                 pointerEvents: 'none',
-                userSelect: 'none'
+                userSelect: 'none',
+                lineHeight: 1
               }}>
                 {rank}
               </span>
@@ -552,14 +552,14 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
             {showFileLabel && (
               <span style={{
                 position: 'absolute',
-                bottom: 2,
-                right: 4,
-                fontSize: '0.62rem',
-                fontWeight: 800,
-                opacity: 0.65,
-                color: isDark ? '#e0e7ff' : '#1e1b4b',
+                bottom: 3,
+                right: 5,
+                fontSize: '0.75rem',
+                fontWeight: '900',
+                color: isDark ? '#ffffff' : '#2c3e2c',
                 pointerEvents: 'none',
-                userSelect: 'none'
+                userSelect: 'none',
+                lineHeight: 1
               }}>
                 {file}
               </span>
