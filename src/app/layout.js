@@ -21,6 +21,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
+        <div className="ambient-bg">
+          <div className="ambient-grid" />
+          <div className="ambient-blob blob-1" />
+          <div className="ambient-blob blob-2" />
+          <div className="ambient-blob blob-3" />
+        </div>
         {children}
         <BGMPlayer />
       </body>
