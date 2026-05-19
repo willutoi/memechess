@@ -87,7 +87,7 @@ export default function GameChat({ username }) {
       {/* Chat Drawer */}
       {open && (
         <div style={{
-          position: 'absolute', bottom: '120%', right: 0,
+          position: 'absolute', top: '120%', right: 0,
           width: 300, background: '#0f0f13',
           border: '1px solid rgba(99,102,241,0.3)',
           borderRadius: 14, overflow: 'hidden',
