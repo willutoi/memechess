@@ -348,12 +348,12 @@ export default function PuzzlesPage() {
       {/* Main Content Layout */}
       <div className="puzzles-grid" style={{ maxWidth: '1000px', alignItems: 'start' }}>
         {/* Left Side: Puzzle list */}
-        <div className="neo-panel" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '550px', overflowY: 'auto', background: '#ffffff', position: 'relative' }}>
+        <div className="neo-panel" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '550px', background: '#ffffff', position: 'relative', overflow: 'visible' }}>
           {/* Sticker */}
           <div className="neo-sticker sticker-purple" style={{ top: '-12px', left: '-15px', transform: 'rotate(-4deg)', fontSize: '0.62rem' }}>🧩 PUZZLE PACK</div>
 
           <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, borderBottom: '2px solid var(--border-dark)', paddingBottom: '6px' }}>Selection</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', overflowY: 'auto', flex: 1, paddingRight: '4px' }}>
             {puzzles.map(p => {
               const isSelected = selectedPuzzle?.id === p.id;
               return (

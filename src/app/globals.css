@@ -2,47 +2,44 @@
 
 :root {
   /* ═══════════════════════════════════════════════════════
-     ЛЮКСОВАЯ МОНОХРОМНАЯ ПАЛИТРА (Apple / Linear style)
+     DESIGN SYSTEM - PLAYFUL LUXURY MINIMALISM
      ═════════════════════════════════════════════════════ */
-  --background: #ffffff;
-  --background-elevated: #fafafa;
-  --background-subtle: #f5f5f5;
+  --background: #f5f5f7;          /* Soft grey-cream background for card pop */
+  --background-elevated: #ffffff;  /* Card surface */
+  --background-subtle: #fafafa;
   
-  --foreground: #111111;           /* almost black */
-  --foreground-secondary: #525252;   /* medium gray */
-  --foreground-tertiary: #a3a3a3;  /* light gray */
+  --foreground: #1c1917;           /* Soft stone-900 (less harsh than black) */
+  --foreground-secondary: #57524e;   /* Medium stone-600 */
+  --foreground-tertiary: #a8a29e;  /* Light stone-400 */
   
-  /* ЕДИНСТВЕННЫЙ акцент — строгий графит */
-  --accent: #171717;
+  /* Акцентные цвета — яркие и игривые, но чистые */
+  --accent-primary: #ec4899;   /* Playful Pink */
+  --accent-secondary: #3b82f6; /* Azure Blue */
+  --accent-green: #10b981;     /* Mint Green */
+  --accent-purple: #8b5cf6;    /* Violet Purple */
+  --accent: #171717;           /* Carbon Black */
   --accent-hover: #000000;
   --accent-foreground: #ffffff;
   
-  /* Переменные для обратной совместимости с существующим кодом */
-  --accent-primary: #171717;
-  --accent-secondary: #525252;
-  --accent-green: #262626;
-  --accent-purple: #404040;
-  
-  /* Структурные элементы */
+  /* Границы */
   --border-subtle: #e5e5e5;
   --border-strong: #d4d4d4;
-  --border-dark: #e5e5e5; /* для совместимости с кодом */
+  --border-dark: #e5e5e5;
   --surface: #ffffff;
 
   /* Превосходные тени — едва заметные, дорогие */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.03);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.01);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0, 0, 0, 0.01);
-  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.03), 0 4px 10px rgba(0, 0, 0, 0.01);
-  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.04), 0 8px 16px rgba(0, 0, 0, 0.01);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.01);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.04), 0 2px 6px rgba(0, 0, 0, 0.02);
+  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.02);
   
-  /* Люксовые радиусы */
+  /* Радиусы */
   --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
   --radius-xl: 24px;
   
-  /* Типографика */
+  /* Шрифты */
   --font-display: 'Space Grotesk', -apple-system, sans-serif;
   --font-body: 'Inter', -apple-system, sans-serif;
 }
@@ -69,12 +66,12 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════
-   ТИПОГРАФИКА — МОНУМЕНТАЛЬНАЯ
+   ТИПОГРАФИКА
    ═══════════════════════════════════════════════════════ */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -0.03em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   line-height: 1.25;
   color: var(--foreground);
 }
@@ -96,54 +93,47 @@ a {
 }
 
 /* ═══════════════════════════════════════════════════════
-   PREMIUM PANEL — ЧИСТАЯ КАРТОЧКА С ТОНКИМИ ГРАНИЦАМИ
+   PREMIUM PANEL
    ═══════════════════════════════════════════════════════ */
 .neo-panel {
   background: var(--surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
 }
 
 .neo-panel:hover {
   box-shadow: var(--shadow-md);
   border-color: var(--border-strong);
-}
-
-/* Панель с эффектом — для важных секций */
-.neo-panel-elevated {
-  background: var(--background-elevated);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
 }
 
 /* ═══════════════════════════════════════════════════════
-   INPUTS — ТАКТИЛЬНЫЕ, КАК APPLE
+   INPUTS
    ═══════════════════════════════════════════════════════ */
 input[type="text"],
 input[type="password"] {
   width: 100%;
   padding: 14px 16px;
   border-radius: var(--radius-md);
-  background: var(--background-elevated);
+  background: var(--background-subtle);
   border: 1px solid var(--border-subtle);
   color: var(--foreground);
   font-size: 0.95rem;
   font-family: var(--font-body);
   font-weight: 400;
   outline: none;
-  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: var(--shadow-xs);
 }
 
 input[type="text"]:focus,
 input[type="password"]:focus {
-  background: var(--background);
-  border-color: var(--accent);
-  box-shadow: var(--shadow-md), 0 0 0 4px rgba(0, 0, 0, 0.02);
+  background: var(--surface);
+  border-color: var(--accent-secondary);
+  box-shadow: var(--shadow-md), 0 0 0 4px rgba(59, 130, 246, 0.08);
 }
 
 input::placeholder {
@@ -151,7 +141,7 @@ input::placeholder {
 }
 
 /* ═══════════════════════════════════════════════════════
-   BUTTONS — ТАКТИЛЬНЫЕ, ДОРОГИЕ
+   BUTTONS
    ═══════════════════════════════════════════════════════ */
 .btn-primary {
   background: var(--accent);
@@ -160,11 +150,11 @@ input::placeholder {
   padding: 12px 24px;
   border-radius: var(--radius-md);
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.92rem;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.015em;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: var(--shadow-sm);
   display: inline-flex;
   align-items: center;
@@ -174,7 +164,7 @@ input::placeholder {
 
 .btn-primary:hover:not(:disabled) {
   background: var(--accent-hover);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
 
@@ -190,17 +180,17 @@ input::placeholder {
 }
 
 .btn-secondary {
-  background: var(--background-elevated);
+  background: var(--surface);
   color: var(--foreground);
   border: 1px solid var(--border-subtle);
   padding: 12px 24px;
   border-radius: var(--radius-md);
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.92rem;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.015em;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: var(--shadow-xs);
   display: inline-flex;
   align-items: center;
@@ -209,17 +199,16 @@ input::placeholder {
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: var(--background);
+  background: var(--background-subtle);
   border-color: var(--border-strong);
   box-shadow: var(--shadow-sm);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 .btn-secondary:active:not(:disabled) {
   transform: translateY(0.5px);
 }
 
-/* Ghost button — для третичных действий */
 .btn-ghost {
   background: transparent;
   color: var(--foreground-secondary);
@@ -239,62 +228,60 @@ input::placeholder {
 }
 
 /* ═══════════════════════════════════════════════════════
-   STATUS BADGES — КАК ELITE ENTERPRISE SYSTEMS
+   PLAYFUL CORPORATE BADGES / STICKERS
    ═══════════════════════════════════════════════════════ */
 .neo-sticker {
   position: absolute;
   display: inline-flex;
   align-items: center;
   padding: 4px 10px;
-  border-radius: 4px;
+  border-radius: 6px;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 0.68rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   user-select: none;
   z-index: 10;
-  border: 1px solid var(--border-subtle);
-  background: var(--background-elevated);
-  color: var(--foreground-secondary);
-  box-shadow: var(--shadow-xs);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s ease;
 }
 
 .sticker-pink {
-  background: #ffffff;
-  color: #171717;
-  border-color: var(--border-strong);
+  background: #fdf2f8;
+  color: #db2777;
+  border: 1px solid #fbcfe8;
 }
 
 .sticker-yellow {
-  background: #fafafa;
-  color: #262626;
-  border-color: var(--border-subtle);
+  background: #fffbeb;
+  color: #d97706;
+  border: 1px solid #fef3c7;
 }
 
 .sticker-cyan {
-  background: #ffffff;
-  color: #171717;
-  border-color: var(--border-strong);
+  background: #f0f9ff;
+  color: #0284c7;
+  border: 1px solid #e0f2fe;
 }
 
 .sticker-green {
-  background: #fafafa;
-  color: #262626;
-  border-color: var(--border-subtle);
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #dcfce7;
 }
 
 .sticker-purple {
-  background: #171717;
-  color: #ffffff;
-  border-color: #171717;
+  background: #faf5ff;
+  color: #7c3aed;
+  border: 1px solid #f3e8ff;
 }
 
 /* ═══════════════════════════════════════════════════════
-   TEXT GRADIENT — УМЕРЕННЫЙ ЛЮКС
+   TEXT GRADIENT
    ═══════════════════════════════════════════════════════ */
 .text-gradient {
-  background: linear-gradient(135deg, var(--foreground) 0%, #525252 100%);
+  background: linear-gradient(135deg, var(--foreground) 0%, var(--accent-purple) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -377,7 +364,7 @@ input::placeholder {
 }
 
 /* ═══════════════════════════════════════════════════════
-   CUSTOM SCROLLBAR — МИНИМАЛИСТИЧНАЯ
+   SCROLLBAR
    ═══════════════════════════════════════════════════════ */
 ::-webkit-scrollbar {
   width: 6px;

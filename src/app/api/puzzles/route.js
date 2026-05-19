@@ -129,7 +129,6 @@ export async function POST(req) {
           elo: { increment: eloGained }
         }
       });
-      window.dispatchEvent && window.dispatchEvent(new CustomEvent('memechess_user_updated'));
     }
 
     return NextResponse.json({
