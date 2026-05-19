@@ -55,6 +55,11 @@ export async function DELETE(req) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+    // Delete child rows to prevent foreign key violations
+    await prisma.gameHistory.deleteMany({ where: { userId: user.id } });
+    await prisma.userQuest.deleteMany({ where: { userId: user.id } });
+    await prisma.userAchievement.deleteMany({ where: { userId: user.id } });
+
     await prisma.user.delete({ where: { username } });
 
     return NextResponse.json({ success: true, message: `User "${username}" deleted.` });
