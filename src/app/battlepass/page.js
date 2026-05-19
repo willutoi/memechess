@@ -89,11 +89,12 @@ export default function BattlePass() {
   if (!user) {
     return (
       <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
-        <div className="glass-panel" style={{ padding: '3rem', textAlign: 'center', maxWidth: '400px' }}>
-          <p style={{ fontSize: '3rem' }}>🔒</p>
-          <h2>Log In First</h2>
-          <p style={{ opacity: 0.7, margin: '1rem 0' }}>Log in to view and unlock your Aura Pass tiers!</p>
-          <Link href="/"><button className="btn-primary">Go to Login</button></Link>
+        <div className="neo-panel" style={{ padding: '3rem 2rem', textAlign: 'center', maxWidth: '380px', width: '100%', position: 'relative', background: '#ffffff' }}>
+          <div className="neo-sticker sticker-pink" style={{ top: '-15px', left: '-20px', transform: 'rotate(-8deg)' }}>🔒 LOCKED</div>
+          <p style={{ fontSize: '3.5rem', margin: '0 0 1rem 0' }}>🔒</p>
+          <h2 style={{ fontSize: '1.6rem', fontWeight: 900, marginBottom: '0.5rem' }}>Log In First</h2>
+          <p style={{ opacity: 0.7, margin: '0.5rem 0 1.5rem', fontSize: '0.9rem', fontWeight: 600 }}>Log in to view and unlock your Aura Pass rewards!</p>
+          <Link href="/"><button className="btn-primary" style={{ width: '100%' }}>Go to Login</button></Link>
         </div>
       </main>
     );

@@ -40,7 +40,7 @@ const PUZZLES = [
     id: 'puzzle_queen_sacrifice',
     title: 'Sigma Queen Sac 👑',
     description: 'Sacrifice your Queen for maximum aura points and checkmate on the next move.',
-    fen: '6rk/5Q1p/7R/8/8/8/8/6K1 w - - 0 1', // White to move
+    fen: '6rk/5Q1p/7R/8/8/8/8/7K w - - 0 1', // White to move
     turn: 'w',
     solution: ['Qxh7#', 'Qxh7'],
     rewardCoins: 250,
