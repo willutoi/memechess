@@ -1,14 +1,50 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
 
 :root {
-  --background: #fafaf9; /* warm off-white */
-  --foreground: #1c1917; /* soft stone-900 */
-  --accent-primary: #f43f5e; /* soft premium rose */
-  --accent-secondary: #3b82f6; /* electric blue */
-  --accent-green: #10b981; /* soft green */
-  --accent-purple: #8b5cf6; /* soft purple */
-  --border-dark: #e7e5e4; /* stone-200, soft border */
+  /* ═══════════════════════════════════════════════════════
+     ЛЮКСОВАЯ МОНОХРОМНАЯ ПАЛИТРА (Apple / Linear style)
+     ═════════════════════════════════════════════════════ */
+  --background: #ffffff;
+  --background-elevated: #fafafa;
+  --background-subtle: #f5f5f5;
+  
+  --foreground: #111111;           /* almost black */
+  --foreground-secondary: #525252;   /* medium gray */
+  --foreground-tertiary: #a3a3a3;  /* light gray */
+  
+  /* ЕДИНСТВЕННЫЙ акцент — строгий графит */
+  --accent: #171717;
+  --accent-hover: #000000;
+  --accent-foreground: #ffffff;
+  
+  /* Переменные для обратной совместимости с существующим кодом */
+  --accent-primary: #171717;
+  --accent-secondary: #525252;
+  --accent-green: #262626;
+  --accent-purple: #404040;
+  
+  /* Структурные элементы */
+  --border-subtle: #e5e5e5;
+  --border-strong: #d4d4d4;
+  --border-dark: #e5e5e5; /* для совместимости с кодом */
   --surface: #ffffff;
+
+  /* Превосходные тени — едва заметные, дорогие */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.01);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0, 0, 0, 0.01);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.03), 0 4px 10px rgba(0, 0, 0, 0.01);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.04), 0 8px 16px rgba(0, 0, 0, 0.01);
+  
+  /* Люксовые радиусы */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  
+  /* Типографика */
+  --font-display: 'Space Grotesk', -apple-system, sans-serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
 }
 
 * {
@@ -23,19 +59,35 @@ body {
   overflow-x: hidden;
   background-color: var(--background);
   color: var(--foreground);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  min-height: 100vh;
-  background-image: 
-    radial-gradient(circle at 10% 20%, rgba(244, 63, 94, 0.02), transparent 25%),
-    radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.02), transparent 25%);
-  background-attachment: fixed;
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  font-weight: 400;
+  letter-spacing: -0.015em;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* ═══════════════════════════════════════════════════════
+   ТИПОГРАФИКА — МОНУМЕНТАЛЬНАЯ
+   ═══════════════════════════════════════════════════════ */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+  color: var(--foreground);
+}
+
+h1 { font-size: 2.2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.4rem; }
+h4 { font-size: 1.15rem; }
+h5 { font-size: 1rem; }
+h6 { font-size: 0.85rem; }
+
+p {
+  color: var(--foreground-secondary);
 }
 
 a {
@@ -43,59 +95,77 @@ a {
   text-decoration: none;
 }
 
-/* Neo-brutalist Panel (Soften version) */
+/* ═══════════════════════════════════════════════════════
+   PREMIUM PANEL — ЧИСТАЯ КАРТОЧКА С ТОНКИМИ ГРАНИЦАМИ
+   ═══════════════════════════════════════════════════════ */
 .neo-panel {
   background: var(--surface);
-  border: 1px solid var(--border-dark);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.01), 
-              0 4px 16px rgba(0, 0, 0, 0.03);
-  border-radius: 16px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
   position: relative;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .neo-panel:hover {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.01), 
-              0 6px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-strong);
 }
 
-/* Form Inputs */
+/* Панель с эффектом — для важных секций */
+.neo-panel-elevated {
+  background: var(--background-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ═══════════════════════════════════════════════════════
+   INPUTS — ТАКТИЛЬНЫЕ, КАК APPLE
+   ═══════════════════════════════════════════════════════ */
 input[type="text"],
 input[type="password"] {
   width: 100%;
   padding: 14px 16px;
-  border-radius: 12px;
-  background: var(--surface);
-  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-md);
+  background: var(--background-elevated);
+  border: 1px solid var(--border-subtle);
   color: var(--foreground);
   font-size: 0.95rem;
+  font-family: var(--font-body);
+  font-weight: 400;
   outline: none;
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: var(--shadow-xs);
 }
 
 input[type="text"]:focus,
 input[type="password"]:focus {
-  background: var(--surface);
-  border-color: var(--accent-secondary);
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+  background: var(--background);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md), 0 0 0 4px rgba(0, 0, 0, 0.02);
 }
 
-/* Primary Button (Soft hover & shadow glow) */
+input::placeholder {
+  color: var(--foreground-tertiary);
+}
+
+/* ═══════════════════════════════════════════════════════
+   BUTTONS — ТАКТИЛЬНЫЕ, ДОРОГИЕ
+   ═══════════════════════════════════════════════════════ */
 .btn-primary {
-  background: var(--accent-primary);
-  color: #ffffff;
+  background: var(--accent);
+  color: var(--accent-foreground);
   border: 1px solid rgba(0, 0, 0, 0.05);
   padding: 12px 24px;
-  border-radius: 12px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  font-size: 0.98rem;
+  border-radius: var(--radius-md);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.92rem;
+  letter-spacing: 0.01em;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.12);
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: var(--shadow-sm);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -103,36 +173,35 @@ input[type="password"]:focus {
 }
 
 .btn-primary:hover:not(:disabled) {
-  transform: translateY(-1.5px);
-  box-shadow: 0 6px 20px rgba(244, 63, 94, 0.2);
-  filter: brightness(1.03);
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-primary:active:not(:disabled) {
   transform: translateY(0.5px);
-  box-shadow: 0 2px 6px rgba(244, 63, 94, 0.12);
+  box-shadow: var(--shadow-xs);
 }
 
 .btn-primary:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
   box-shadow: none;
 }
 
-/* Secondary Button */
 .btn-secondary {
-  background: var(--surface);
+  background: var(--background-elevated);
   color: var(--foreground);
-  border: 1px solid var(--border-dark);
+  border: 1px solid var(--border-subtle);
   padding: 12px 24px;
-  border-radius: 12px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  font-size: 0.98rem;
+  border-radius: var(--radius-md);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.92rem;
+  letter-spacing: 0.01em;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.01),
-              0 3px 8px rgba(0, 0, 0, 0.02);
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: var(--shadow-xs);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -140,99 +209,124 @@ input[type="password"]:focus {
 }
 
 .btn-secondary:hover:not(:disabled) {
-  transform: translateY(-1.5px);
-  border-color: rgba(28, 25, 23, 0.2);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.01),
-              0 6px 16px rgba(0, 0, 0, 0.04);
-  background: #fafaf9;
+  background: var(--background);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
 .btn-secondary:active:not(:disabled) {
   transform: translateY(0.5px);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.01),
-              0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
-/* Sticker system (Modern soft pastel tags) */
+/* Ghost button — для третичных действий */
+.btn-ghost {
+  background: transparent;
+  color: var(--foreground-secondary);
+  border: none;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  color: var(--foreground);
+  background: var(--background-subtle);
+}
+
+/* ═══════════════════════════════════════════════════════
+   STATUS BADGES — КАК ELITE ENTERPRISE SYSTEMS
+   ═══════════════════════════════════════════════════════ */
 .neo-sticker {
   position: absolute;
+  display: inline-flex;
+  align-items: center;
   padding: 4px 10px;
-  border: 1px solid rgba(28, 25, 23, 0.06);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
-  font-family: 'Space Grotesk', sans-serif;
+  border-radius: 4px;
+  font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.72rem;
-  border-radius: 8px;
-  z-index: 10;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
   user-select: none;
-  pointer-events: none;
+  z-index: 10;
+  border: 1px solid var(--border-subtle);
+  background: var(--background-elevated);
+  color: var(--foreground-secondary);
+  box-shadow: var(--shadow-xs);
 }
 
 .sticker-pink {
-  background: #fdf2f8;
-  color: #db2777;
-  border-color: #fbcfe8;
+  background: #ffffff;
+  color: #171717;
+  border-color: var(--border-strong);
 }
 
 .sticker-yellow {
-  background: #fffbeb;
-  color: #d97706;
-  border-color: #fef3c7;
+  background: #fafafa;
+  color: #262626;
+  border-color: var(--border-subtle);
 }
 
 .sticker-cyan {
-  background: #f0f9ff;
-  color: #0284c7;
-  border-color: #e0f2fe;
+  background: #ffffff;
+  color: #171717;
+  border-color: var(--border-strong);
 }
 
 .sticker-green {
-  background: #f0fdf4;
-  color: #16a34a;
-  border-color: #dcfce7;
+  background: #fafafa;
+  color: #262626;
+  border-color: var(--border-subtle);
 }
 
 .sticker-purple {
-  background: #faf5ff;
-  color: #7c3aed;
-  border-color: #f3e8ff;
+  background: #171717;
+  color: #ffffff;
+  border-color: #171717;
 }
 
-/* Header Text Gradient */
+/* ═══════════════════════════════════════════════════════
+   TEXT GRADIENT — УМЕРЕННЫЙ ЛЮКС
+   ═══════════════════════════════════════════════════════ */
 .text-gradient {
-  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-purple) 100%);
+  background: linear-gradient(135deg, var(--foreground) 0%, #525252 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Play Board Responsive Split Grid */
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE GRID SYSTEMS
+   ═══════════════════════════════════════════════════════ */
 .board-grid-wrapper {
   display: grid;
   grid-template-columns: 1.25fr 1fr;
-  gap: 28px;
+  gap: 32px;
   width: 100%;
 }
 
 @media (max-width: 768px) {
   .board-grid-wrapper {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 24px;
   }
 }
 
 .menu-action-row {
   display: flex;
-  gap: 1.2rem;
+  gap: 16px;
   width: 100%;
 }
 
 @media (max-width: 580px) {
   .menu-action-row {
     flex-direction: column;
-    gap: 0.8rem;
+    gap: 12px;
   }
 }
 
@@ -250,7 +344,7 @@ input[type="password"]:focus {
     gap: 12px;
   }
   .audio-pack-row button {
-    width: 100% !important;
+    width: 100%;
   }
 }
 
@@ -265,14 +359,14 @@ input[type="password"]:focus {
 @media (max-width: 520px) {
   .stats-grid-container {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 12px;
   }
 }
 
 .puzzles-grid {
   display: grid;
   grid-template-columns: 1fr 1.3fr;
-  gap: 1.8rem;
+  gap: 24px;
   width: 100%;
 }
 
@@ -282,18 +376,23 @@ input[type="password"]:focus {
   }
 }
 
-/* Custom Scrollbars */
+/* ═══════════════════════════════════════════════════════
+   CUSTOM SCROLLBAR — МИНИМАЛИСТИЧНАЯ
+   ═══════════════════════════════════════════════════════ */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.02);
-  border-radius: 99px;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border-dark);
-  border-radius: 99px;
+  background: var(--border-strong);
+  border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--foreground-tertiary);
 }
