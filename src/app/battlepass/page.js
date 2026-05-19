@@ -110,51 +110,54 @@ export default function BattlePass() {
   });
 
   return (
-    <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem', gap: '1.5rem' }}>
+    <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2.5rem 1.5rem', gap: '2rem' }}>
       {/* Header */}
-      <div style={{ width: '100%', maxWidth: '800px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ width: '100%', maxWidth: '800px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
         <Link href="/">
           <button className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <ArrowLeft size={18} /> Back to Menu
           </button>
         </Link>
-        <h2 className="text-gradient" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.8rem', fontWeight: 800 }}>
-          <Star size={24} color="#a855f7" /> Season 1: Aura Pass
+        <h2 className="text-gradient" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '2.2rem', fontWeight: 900 }}>
+          <Star size={28} color="var(--accent-purple)" /> Season 1: Aura Pass
         </h2>
         <div style={{ display: 'flex', gap: '10px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(217,119,6,0.08)', border: '1px solid rgba(217,119,6,0.25)', padding: '6px 12px', borderRadius: '18px', color: '#b45309', fontWeight: 'bold', fontSize: '0.9rem' }}>
-            🪙 {user.meme_coins}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: '#fef3c7', border: '2px solid var(--border-dark)', padding: '6px 16px', borderRadius: '14px', color: '#b45309', fontWeight: 900, fontSize: '0.9rem', boxShadow: '2px 2px 0px 0px var(--border-dark)' }}>
+            🪙 {user.meme_coins.toLocaleString()}
           </div>
         </div>
       </div>
 
       {/* Progress Card */}
-      <div className="glass-panel" style={{ width: '100%', maxWidth: '800px', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+      <div className="neo-panel" style={{ width: '100%', maxWidth: '800px', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.2rem', position: 'relative' }}>
+        {/* Sticker */}
+        <div className="neo-sticker sticker-purple" style={{ top: '-15px', right: '15px', transform: 'rotate(4deg)' }}>⚡ PASS</div>
+
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
-            <h3 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800 }}>Your Status: Tier {currentBPTier} / {BP_REWARDS.length}</h3>
-            <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', opacity: 0.7 }}>
+            <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 900 }}>Your Status: Tier {currentBPTier} / {BP_REWARDS.length}</h3>
+            <p style={{ margin: '6px 0 0 0', fontSize: '0.88rem', opacity: 0.75, fontWeight: 700 }}>
               Wins: <b>{user.wins}</b> · ELO: <b>{user.elo}</b> · Games Played: <b>{user.games_played}</b>
             </p>
           </div>
           {/* Circular level indicator */}
-          <div style={{ width: 60, height: 60, borderRadius: '50%', background: 'linear-gradient(135deg,#a855f7,#6366f1)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(168,85,247,0.3)', border: '2px solid rgba(255,255,255,0.2)', color: '#ffffff' }}>
-            <span style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', opacity: 0.8 }}>Tier</span>
+          <div style={{ width: 60, height: 60, borderRadius: '50%', background: 'var(--accent-purple)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--border-dark)', color: '#ffffff', boxShadow: '3px 3px 0px 0px var(--border-dark)' }}>
+            <span style={{ fontSize: '0.62rem', fontWeight: 800, textTransform: 'uppercase', opacity: 0.85 }}>Tier</span>
             <span style={{ fontSize: '1.4rem', fontWeight: 900 }}>{currentBPTier}</span>
           </div>
         </div>
 
         {/* Global Progress bar */}
-        <div style={{ height: 10, background: 'rgba(0,0,0,0.06)', borderRadius: 99, overflow: 'hidden' }}>
-          <div style={{ height: '100%', width: `${(currentBPTier / BP_REWARDS.length) * 100}%`, background: 'linear-gradient(90deg, #a855f7, #6366f1)', borderRadius: 99, transition: 'width 0.6s ease' }} />
+        <div style={{ height: 14, background: '#f5f5f0', border: '2px solid var(--border-dark)', borderRadius: 99, overflow: 'hidden' }}>
+          <div style={{ height: '100%', width: `${(currentBPTier / BP_REWARDS.length) * 100}%`, background: 'linear-gradient(90deg, var(--accent-purple), var(--accent-secondary))', borderRadius: 99, transition: 'width 0.6s ease' }} />
         </div>
 
         {claimStatus.message && (
           <div style={{
-            background: claimStatus.success ? 'rgba(16,185,129,0.08)' : 'rgba(239,68,68,0.08)',
-            border: `1px solid ${claimStatus.success ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'}`,
+            background: claimStatus.success ? 'rgba(16,185,129,0.05)' : 'rgba(239,68,68,0.05)',
+            border: '2px solid var(--border-dark)',
             color: claimStatus.success ? '#059669' : '#dc2626',
-            borderRadius: 10, padding: '10px 14px', fontSize: '0.88rem', fontWeight: 700
+            borderRadius: 10, padding: '10px 14px', fontSize: '0.88rem', fontWeight: 800, boxShadow: '2px 2px 0px var(--border-dark)'
           }}>
             {claimStatus.message}
           </div>
@@ -162,7 +165,7 @@ export default function BattlePass() {
       </div>
 
       {/* Rewards Timeline list */}
-      <div style={{ width: '100%', maxWidth: '800px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div style={{ width: '100%', maxWidth: '800px', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
         {BP_REWARDS.map(r => {
           const isEligible = r.check(user);
           const claimKey = `bp_level_${r.level}`;
@@ -171,42 +174,43 @@ export default function BattlePass() {
           return (
             <div 
               key={r.level} 
-              className="glass-panel"
+              className="neo-panel"
               style={{
                 padding: '1.25rem 1.5rem',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                border: isClaimed 
-                  ? '1px solid rgba(16,185,129,0.25)' 
-                  : isEligible 
-                    ? '1px solid rgba(168,85,247,0.3)' 
-                    : '1px solid var(--glass-border)',
+                border: '2px solid var(--border-dark)',
                 background: isClaimed 
-                  ? 'rgba(16,185,129,0.03)' 
+                  ? '#d1fae5' 
                   : isEligible 
-                    ? 'rgba(168,85,247,0.03)' 
-                    : 'rgba(0,0,0,0.015)',
-                transition: 'all 0.25s'
+                    ? 'rgba(168,85,247,0.05)' 
+                    : '#ffffff',
+                boxShadow: isClaimed ? '1px 1px 0px var(--border-dark)' : '3px 3px 0px 0px var(--border-dark)',
+                transform: isClaimed ? 'translate(2px, 2px)' : 'none',
+                transition: 'all 0.15s'
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
                 <div style={{
-                  width: 44, height: 44, borderRadius: '12px',
-                  background: isClaimed 
-                    ? 'rgba(16,185,129,0.08)' 
-                    : isEligible 
-                      ? 'rgba(168,85,247,0.08)' 
-                      : 'rgba(0,0,0,0.03)',
-                  border: `1px solid ${isClaimed ? '#10b981' : isEligible ? '#a855f7' : 'rgba(0,0,0,0.08)'}`,
-                  color: isClaimed ? '#059669' : isEligible ? '#a855f7' : '#64748b',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '900', fontSize: '1.1rem'
+                  width: 44,
+                  height: 44,
+                  borderRadius: '12px',
+                  background: '#ffffff',
+                  border: '2px solid var(--border-dark)',
+                  color: isClaimed ? '#059669' : isEligible ? 'var(--accent-purple)' : 'var(--foreground)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: '900',
+                  fontSize: '1.15rem',
+                  boxShadow: '2px 2px 0px var(--border-dark)'
                 }}>
                   {r.level}
                 </div>
                 <div>
-                  <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: 'var(--foreground)' }}>{r.title}</h4>
-                  <p style={{ margin: '2px 0 0 0', fontSize: '0.78rem', opacity: 0.65, display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--foreground)' }}>
+                  <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 900, color: 'var(--foreground)' }}>{r.title}</h4>
+                  <p style={{ margin: '2px 0 0 0', fontSize: '0.82rem', opacity: 0.75, display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--foreground)', fontWeight: 700 }}>
                     {!isEligible && <Lock size={12} />} Req: {r.requirementText}
                   </p>
                 </div>
@@ -214,15 +218,15 @@ export default function BattlePass() {
 
               <div>
                 {isClaimed ? (
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#059669', fontSize: '0.85rem', fontWeight: 800 }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#047857', fontSize: '0.85rem', fontWeight: 900 }}>
                     <CheckCircle2 size={16} /> Claimed
                   </span>
                 ) : isEligible ? (
-                  <button onClick={() => handleClaim(r.level)} className="btn-primary" style={{ padding: '6px 16px', fontSize: '0.85rem', fontWeight: 800 }}>
+                  <button onClick={() => handleClaim(r.level)} className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.85rem', fontWeight: 800 }}>
                     🎁 Claim Reward
                   </button>
                 ) : (
-                  <span style={{ color: '#64748b', fontSize: '0.82rem', fontWeight: 700 }}>
+                  <span style={{ color: 'var(--foreground)', opacity: 0.6, fontSize: '0.85rem', fontWeight: 700 }}>
                     Locked 🔒
                   </span>
                 )}

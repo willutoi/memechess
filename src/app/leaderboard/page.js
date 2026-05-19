@@ -37,7 +37,7 @@ export default function Leaderboard() {
       </div>
 
       {/* Tabs Menu */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', width: '100%', maxWidth: '650px', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', gap: '1.2rem', marginBottom: '2rem', width: '100%', maxWidth: '650px', justifyContent: 'center' }}>
         <button
           onClick={() => setActiveTab('elo')}
           style={{
@@ -46,12 +46,14 @@ export default function Leaderboard() {
             gap: '0.5rem',
             padding: '10px 20px',
             borderRadius: '12px',
-            border: activeTab === 'elo' ? '2px solid var(--accent-primary)' : '1px solid rgba(15,23,42,0.08)',
-            background: activeTab === 'elo' ? 'rgba(79,70,229,0.08)' : 'rgba(15,23,42,0.04)',
-            color: activeTab === 'elo' ? 'var(--accent-primary)' : '#64748b',
-            fontWeight: 700,
+            border: '2px solid var(--border-dark)',
+            background: activeTab === 'elo' ? 'var(--accent-primary)' : '#ffffff',
+            color: activeTab === 'elo' ? '#ffffff' : 'var(--foreground)',
+            boxShadow: activeTab === 'elo' ? '1px 1px 0px var(--border-dark)' : '3px 3px 0px var(--border-dark)',
+            transform: activeTab === 'elo' ? 'translate(2px, 2px)' : 'none',
+            fontWeight: 800,
             cursor: 'pointer',
-            transition: 'all 0.2s'
+            transition: 'all 0.1s'
           }}
         >
           <Award size={18} /> Top ELO Kings
@@ -64,12 +66,14 @@ export default function Leaderboard() {
             gap: '0.5rem',
             padding: '10px 20px',
             borderRadius: '12px',
-            border: activeTab === 'coins' ? '2px solid var(--accent-secondary)' : '1px solid rgba(15,23,42,0.08)',
-            background: activeTab === 'coins' ? 'rgba(124,58,237,0.08)' : 'rgba(15,23,42,0.04)',
-            color: activeTab === 'coins' ? 'var(--accent-secondary)' : '#64748b',
-            fontWeight: 700,
+            border: '2px solid var(--border-dark)',
+            background: activeTab === 'coins' ? 'var(--accent-secondary)' : '#ffffff',
+            color: activeTab === 'coins' ? '#ffffff' : 'var(--foreground)',
+            boxShadow: activeTab === 'coins' ? '1px 1px 0px var(--border-dark)' : '3px 3px 0px var(--border-dark)',
+            transform: activeTab === 'coins' ? 'translate(2px, 2px)' : 'none',
+            fontWeight: 800,
             cursor: 'pointer',
-            transition: 'all 0.2s'
+            transition: 'all 0.1s'
           }}
         >
           <Coins size={18} /> Coin Billionaires
@@ -77,9 +81,12 @@ export default function Leaderboard() {
       </div>
 
       {/* Leaderboard Table Container */}
-      <div className="glass-panel" style={{ width: '100%', maxWidth: '650px', padding: '1.5rem 2rem' }}>
+      <div className="neo-panel" style={{ width: '100%', maxWidth: '650px', padding: '1.5rem 2rem', position: 'relative' }}>
+        {/* Sticker */}
+        <div className="neo-sticker sticker-pink" style={{ top: '-15px', right: '15px', transform: 'rotate(6deg)' }}>👑 TOP AURA</div>
+
         {users.length === 0 ? (
-          <div style={{ textAlign: 'center', color: '#64748b', padding: '2rem 0' }}>Loading rankings...</div>
+          <div style={{ textAlign: 'center', color: 'var(--foreground)', opacity: 0.6, padding: '2rem 0', fontWeight: 700 }}>Loading rankings...</div>
         ) : (
           users.map((u, i) => {
             const rank = i + 1;
@@ -93,7 +100,7 @@ export default function Leaderboard() {
                   justifyContent: 'space-between', 
                   alignItems: 'center', 
                   padding: '1.1rem 0', 
-                  borderBottom: '1px solid var(--glass-border)',
+                  borderBottom: i === users.length - 1 ? 'none' : '2px solid var(--border-dark)',
                   animation: 'fadeIn 0.3s ease'
                 }}
               >
@@ -107,19 +114,19 @@ export default function Leaderboard() {
                     #{rank}
                   </span>
                   <div>
-                    <span style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--foreground)' }}>
+                    <span style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--foreground)' }}>
                       {u.username}
                     </span>
                     {isBot && (
                       <span style={{ 
                         marginLeft: 8, 
                         fontSize: '0.65rem', 
-                        background: 'rgba(79,70,229,0.08)', 
-                        border: '1px solid var(--accent-primary)',
-                        color: 'var(--accent-primary)', 
+                        background: 'var(--accent-primary)', 
+                        border: '2px solid var(--border-dark)',
+                        color: '#ffffff', 
                         padding: '2px 6px', 
-                        borderRadius: 4, 
-                        fontWeight: 'bold',
+                        borderRadius: 6, 
+                        fontWeight: '800',
                         verticalAlign: 'middle'
                       }}>
                         BOT
@@ -130,16 +137,16 @@ export default function Leaderboard() {
 
                 <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
                   <div style={{ textAlign: 'right' }}>
-                    <div style={{ color: '#b45309', fontWeight: 800, fontSize: '1.1rem' }}>
+                    <div style={{ color: '#b45309', fontWeight: 900, fontSize: '1.1rem' }}>
                       {u.elo} <span style={{ fontSize: '0.75rem', opacity: 0.8 }}>ELO</span>
                     </div>
-                    <div style={{ fontSize: '0.72rem', opacity: 0.6, color: 'var(--foreground)' }}>
+                    <div style={{ fontSize: '0.75rem', opacity: 0.7, color: 'var(--foreground)', fontWeight: 700 }}>
                       {u.wins || 0} Wins
                     </div>
                   </div>
 
-                  <div style={{ background: 'rgba(124,58,237,0.08)', padding: '6px 12px', borderRadius: 8, minWidth: 90, textAlign: 'center' }}>
-                    <span style={{ color: 'var(--accent-secondary)', fontWeight: 'bold', fontSize: '0.9rem' }}>
+                  <div style={{ background: 'rgba(124,58,237,0.05)', border: '2px solid var(--border-dark)', padding: '6px 12px', borderRadius: 10, minWidth: 90, textAlign: 'center', boxShadow: '2px 2px 0px var(--border-dark)' }}>
+                    <span style={{ color: 'var(--accent-secondary)', fontWeight: 800, fontSize: '0.9rem' }}>
                       {u.meme_coins.toLocaleString()} MC
                     </span>
                   </div>

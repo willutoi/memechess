@@ -114,17 +114,17 @@ export default function Shop() {
   }
 
   return (
-    <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem' }}>
+    <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2.5rem 1.5rem', gap: '2rem' }}>
       {/* Shop Header */}
-      <div style={{ width: '100%', maxWidth: '850px', display: 'flex', justifyContent: 'space-between', marginBottom: '2rem', alignItems: 'center' }}>
+      <div style={{ width: '100%', maxWidth: '850px', display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
         <Link href="/">
           <button className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <ArrowLeft size={20} /> Back to Menu
           </button>
         </Link>
-        <h2 className="text-gradient" style={{ fontSize: '2.2rem', fontWeight: 800 }}>Meme Shop</h2>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(217,119,6,0.08)', border: '1px solid rgba(217,119,6,0.25)', padding: '0.6rem 1.2rem', borderRadius: '24px', color: '#b45309', fontWeight: 'bold' }}>
-          <Coins size={20} /> {user.meme_coins} MC
+        <h2 className="text-gradient" style={{ fontSize: '2.5rem', fontWeight: 900 }}>Meme Shop</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#fef3c7', border: '2px solid var(--border-dark)', padding: '0.6rem 1.2rem', borderRadius: '14px', color: '#b45309', fontWeight: 900, boxShadow: '2px 2px 0px 0px var(--border-dark)' }}>
+          <Coins size={20} /> {user.meme_coins.toLocaleString()} MC
         </div>
       </div>
 
@@ -132,8 +132,11 @@ export default function Shop() {
       <div style={{ width: '100%', maxWidth: '850px', display: 'grid', gridTemplateColumns: '1fr', gap: '2.5rem' }}>
         
         {/* Visual Skins */}
-        <div className="glass-panel" style={{ padding: '2rem' }}>
-          <h3 style={{ marginBottom: '1.5rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem', fontSize: '1.4rem', fontWeight: 800 }}>Visual Skins</h3>
+        <div className="neo-panel" style={{ padding: '2rem', position: 'relative' }}>
+          {/* Sticker */}
+          <div className="neo-sticker sticker-pink" style={{ top: '-15px', left: '15px', transform: 'rotate(-4deg)' }}>🔥 STYLISH</div>
+
+          <h3 style={{ marginBottom: '1.5rem', borderBottom: '2px solid var(--border-dark)', paddingBottom: '0.5rem', fontSize: '1.4rem', fontWeight: 900 }}>Visual Skins</h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
             {skins.map(s => {
               const isEquipped = user.active_skin_pack === s.internal;
@@ -142,15 +145,16 @@ export default function Shop() {
                 <div 
                   key={s.name} 
                   style={{ 
-                    background: 'rgba(0,0,0,0.015)', 
-                    border: `1px solid ${isEquipped ? '#4f46e5' : 'var(--glass-border)'}`, 
+                    background: '#ffffff', 
+                    border: '2px solid var(--border-dark)', 
                     borderRadius: '16px', 
                     padding: '1rem',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
-                    boxShadow: isEquipped ? '0 8px 20px -6px rgba(79, 70, 229, 0.15)' : 'none',
-                    transition: 'all 0.25s ease'
+                    boxShadow: isEquipped ? '1px 1px 0px var(--border-dark)' : '3px 3px 0px 0px var(--border-dark)',
+                    transform: isEquipped ? 'translate(2px, 2px)' : 'none',
+                    transition: 'all 0.15s ease'
                   }}
                 >
                   <div>
@@ -164,25 +168,25 @@ export default function Shop() {
                         objectFit: 'cover', 
                         borderRadius: '12px',
                         marginBottom: '10px',
-                        border: '1px solid rgba(0,0,0,0.05)'
+                        border: '2px solid var(--border-dark)'
                       }} 
                     />
-                    <h4 style={{ fontWeight: '800', fontSize: '1.1rem', marginBottom: '4px' }}>{s.name}</h4>
-                    <p style={{ fontSize: '0.8rem', opacity: 0.7, marginBottom: '8px' }}>{s.desc}</p>
+                    <h4 style={{ fontWeight: '900', fontSize: '1.15rem', marginBottom: '4px' }}>{s.name}</h4>
+                    <p style={{ fontSize: '0.82rem', opacity: 0.75, marginBottom: '10px', fontWeight: 500 }}>{s.desc}</p>
                     
                     {/* Pieces preview */}
-                    <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '1.2rem', padding: '6px', border: '1px solid var(--border-dark)', borderRadius: '10px', background: '#f5f5f0' }}>
                       {s.preview?.map((em, i) => (
-                        <span key={i} style={{ fontSize: '1.3rem', lineHeight: 1 }}>{em}</span>
+                        <span key={i} style={{ fontSize: '1.3rem', lineHeight: 1, filter: 'drop-shadow(1px 1px 0px rgba(0,0,0,0.5))' }}>{em}</span>
                       ))}
                     </div>
                   </div>
 
                   <div>
                     {isEquipped ? (
-                      <button disabled style={{ width: '100%', padding: '8px 0', borderRadius: '8px', border: '1px solid #4f46e5', color: '#4f46e5', background: 'rgba(79,70,229,0.08)', cursor: 'default', fontWeight: 'bold' }}>✓ Equipped</button>
+                      <button disabled style={{ width: '100%', padding: '10px 0', borderRadius: '10px', border: '2px solid var(--border-dark)', color: '#047857', background: '#d1fae5', cursor: 'default', fontWeight: 800 }}>✓ Equipped</button>
                     ) : (
-                      <button onClick={() => handleBuy(s, 'skin')} className="btn-primary" style={{ width: '100%', padding: '8px 0', fontSize: '0.9rem', fontWeight: 'bold' }}>
+                      <button onClick={() => handleBuy(s, 'skin')} className="btn-primary" style={{ width: '100%', padding: '10px 0', fontSize: '0.9rem' }}>
                         {isOwned || s.price === 0 ? '⚡ Equip Pack' : `Buy for ${s.price} MC`}
                       </button>
                     )}
@@ -194,9 +198,12 @@ export default function Shop() {
         </div>
 
         {/* Audio Packs */}
-        <div className="glass-panel" style={{ padding: '2rem' }}>
-          <h3 style={{ marginBottom: '1.5rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem', fontSize: '1.4rem', fontWeight: 800 }}>Audio Packs</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
+        <div className="neo-panel" style={{ padding: '2rem', position: 'relative' }}>
+          {/* Sticker */}
+          <div className="neo-sticker sticker-yellow" style={{ top: '-15px', right: '15px', transform: 'rotate(4deg)' }}>🔊 LOUD = FUNNY</div>
+
+          <h3 style={{ marginBottom: '1.5rem', borderBottom: '2px solid var(--border-dark)', paddingBottom: '0.5rem', fontSize: '1.4rem', fontWeight: 900 }}>Audio Packs</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.2rem' }}>
             {audios.map(a => {
               const isEquipped = user.active_audio_pack === a.internal;
               const isOwned = user.owned_items?.includes(a.internal);
@@ -205,23 +212,24 @@ export default function Shop() {
                   key={a.name} 
                   className="audio-pack-row"
                   style={{ 
-                    background: 'rgba(0,0,0,0.015)',
-                    border: `1px solid ${isEquipped ? '#7c3aed' : 'var(--glass-border)'}`,
+                    background: '#ffffff',
+                    border: '2px solid var(--border-dark)',
                     borderRadius: '12px',
-                    transition: 'all 0.2s',
+                    transition: 'all 0.15s',
                     padding: '1.2rem',
-                    boxShadow: isEquipped ? '0 8px 20px -6px rgba(124, 58, 237, 0.12)' : 'none'
+                    boxShadow: isEquipped ? '1px 1px 0px var(--border-dark)' : '3px 3px 0px 0px var(--border-dark)',
+                    transform: isEquipped ? 'translate(2px, 2px)' : 'none'
                   }}
                 >
                   <div>
-                    <h4 style={{ fontWeight: '800', fontSize: '1.1rem', marginBottom: '4px' }}>{a.name}</h4>
-                    <p style={{ fontSize: '0.8rem', opacity: 0.7, margin: 0 }}>{a.desc}</p>
+                    <h4 style={{ fontWeight: '900', fontSize: '1.15rem', marginBottom: '4px' }}>{a.name}</h4>
+                    <p style={{ fontSize: '0.82rem', opacity: 0.75, margin: 0, fontWeight: 500 }}>{a.desc}</p>
                   </div>
                   <div>
                     {isEquipped ? (
-                      <button disabled style={{ padding: '8px 20px', borderRadius: '8px', border: '1px solid #7c3aed', color: '#7c3aed', background: 'rgba(124,58,237,0.08)', fontWeight: 'bold' }}>✓ Equipped</button>
+                      <button disabled style={{ padding: '10px 20px', borderRadius: '10px', border: '2px solid var(--border-dark)', color: '#047857', background: '#d1fae5', fontWeight: 800 }}>✓ Equipped</button>
                     ) : (
-                      <button onClick={() => handleBuy(a, 'audio')} className="btn-primary" style={{ padding: '8px 20px', fontSize: '0.9rem', fontWeight: 'bold' }}>
+                      <button onClick={() => handleBuy(a, 'audio')} className="btn-primary" style={{ padding: '10px 20px', fontSize: '0.9rem' }}>
                         {isOwned || a.price === 0 ? 'Equip' : `Buy for ${a.price} MC`}
                       </button>
                     )}

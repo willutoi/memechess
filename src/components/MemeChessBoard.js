@@ -442,11 +442,11 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
         const hasPiece = !!piece;
 
         let bgStyle = isDark 
-          ? 'linear-gradient(135deg, #4f46e5 0%, #3730a3 100%)'
-          : 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)';
+          ? '#B8C4A8'
+          : '#FAF8F5';
 
         if (isSelected) {
-          bgStyle = 'rgba(251, 191, 36, 0.7)';
+          bgStyle = '#f59e0b';
         }
 
         let pieceDisplay = null;
@@ -575,59 +575,73 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
   if (!playerColor) {
     return (
       <div style={{ width:'100%', maxWidth:520, margin:'0 auto', textAlign:'center' }}>
-        <div className="glass-panel" style={{ padding:'2.5rem 2rem' }}>
+        <div className="neo-panel" style={{ padding:'2.5rem 2rem', position: 'relative' }}>
+          {/* Stickers */}
+          <div className="neo-sticker sticker-pink" style={{ top: '-15px', left: '-20px', transform: 'rotate(-8deg)' }}>⚔️ ARE YOU READY?</div>
+          <div className="neo-sticker sticker-cyan" style={{ bottom: '-15px', right: '-15px', transform: 'rotate(6deg)' }}>🗿 CHOOSE YOUR FATE</div>
+
           <div style={{ fontSize:'3.5rem', marginBottom:'0.5rem' }}>👑</div>
           <h2 className="text-gradient" style={{ fontSize:'2rem', fontWeight:800, marginBottom:'1rem' }}>MemeChess Arena</h2>
           
           <div style={{ marginBottom: '1.5rem' }}>
-            <p style={{ color:'#4f46e5', marginBottom:'0.5rem', fontSize:'0.9rem', fontWeight:600 }}>⏱️ TIME CONTROL</p>
-            <div style={{ display:'flex', gap:'0.5rem', justifyContent:'center', flexWrap:'wrap' }}>
-              {TIME_CONTROLS.map(tc => (
-                <button
-                  key={tc.name}
-                  onClick={() => setTimeControl(tc)}
-                  style={{
-                    padding: '8px 14px', borderRadius: 8,
-                    border: timeControl.name === tc.name ? '1px solid rgba(217,119,6,0.4)' : '1px solid rgba(0,0,0,0.08)',
-                    background: timeControl.name === tc.name ? 'rgba(217,119,6,0.12)' : 'rgba(0,0,0,0.02)',
-                    color: timeControl.name === tc.name ? '#b45309' : 'var(--foreground)',
-                    cursor: 'pointer', fontWeight: 700, transition: 'all 0.2s', fontSize: '0.85rem'
-                  }}
-                >
-                  <div>{tc.name}</div>
-                  <div style={{ fontSize: '0.7rem', opacity: 0.7 }}>{tc.label}</div>
-                </button>
-              ))}
+            <p style={{ color:'var(--accent-primary)', marginBottom:'0.5rem', fontSize:'0.9rem', fontWeight:800, letterSpacing: '0.05em' }}>⏱️ TIME CONTROL</p>
+            <div style={{ display:'flex', gap:'0.8rem', justifyContent:'center', flexWrap:'wrap' }}>
+              {TIME_CONTROLS.map(tc => {
+                const isActive = timeControl.name === tc.name;
+                return (
+                  <button
+                    key={tc.name}
+                    onClick={() => setTimeControl(tc)}
+                    style={{
+                      padding: '8px 14px', borderRadius: 10,
+                      border: '2px solid var(--border-dark)',
+                      background: isActive ? 'var(--accent-primary)' : '#ffffff',
+                      color: isActive ? '#ffffff' : 'var(--foreground)',
+                      boxShadow: isActive ? '1px 1px 0px 0px var(--border-dark)' : '3px 3px 0px 0px var(--border-dark)',
+                      transform: isActive ? 'translate(2px, 2px)' : 'none',
+                      cursor: 'pointer', fontWeight: 700, transition: 'all 0.1s', fontSize: '0.85rem'
+                    }}
+                  >
+                    <div>{tc.name}</div>
+                    <div style={{ fontSize: '0.7rem', opacity: 0.8 }}>{tc.label}</div>
+                  </button>
+                );
+              })}
             </div>
           </div>
           <div style={{ marginBottom: '2rem' }}>
-            <p style={{ color:'#4f46e5', marginBottom:'0.5rem', fontSize:'0.9rem', fontWeight:600 }}>🤖 AI DIFFICULTY</p>
-            <div style={{ display:'flex', gap:'0.5rem', justifyContent:'center' }}>
-              {['beginner', 'intermediate', 'hard'].map(level => (
-                <button
-                  key={level}
-                  onClick={() => setDifficulty(level)}
-                  style={{
-                    padding: '8px 16px', borderRadius: 8,
-                    border: difficulty === level ? '1px solid #4f46e5' : '1px solid rgba(0,0,0,0.08)',
-                    background: difficulty === level ? '#4f46e5' : 'rgba(0,0,0,0.02)',
-                    color: difficulty === level ? '#fff' : 'var(--foreground)',
-                    cursor: 'pointer', fontWeight: 700, textTransform: 'capitalize', transition: 'all 0.2s'
-                  }}
-                >
-                  {level}
-                </button>
-              ))}
+            <p style={{ color:'var(--accent-secondary)', marginBottom:'0.5rem', fontSize:'0.9rem', fontWeight:800, letterSpacing: '0.05em' }}>🤖 AI DIFFICULTY</p>
+            <div style={{ display:'flex', gap:'0.8rem', justifyContent:'center' }}>
+              {['beginner', 'intermediate', 'hard'].map(level => {
+                const isActive = difficulty === level;
+                return (
+                  <button
+                    key={level}
+                    onClick={() => setDifficulty(level)}
+                    style={{
+                      padding: '8px 16px', borderRadius: 10,
+                      border: '2px solid var(--border-dark)',
+                      background: isActive ? 'var(--accent-secondary)' : '#ffffff',
+                      color: isActive ? '#ffffff' : 'var(--foreground)',
+                      boxShadow: isActive ? '1px 1px 0px 0px var(--border-dark)' : '3px 3px 0px 0px var(--border-dark)',
+                      transform: isActive ? 'translate(2px, 2px)' : 'none',
+                      cursor: 'pointer', fontWeight: 800, textTransform: 'capitalize', transition: 'all 0.1s'
+                    }}
+                  >
+                    {level}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          <p style={{ color:'var(--foreground)', opacity: 0.8, marginBottom:'2rem', fontSize:'0.95rem' }}>Pick your side and start accumulating ELO & Coins fr fr!</p>
+          <p style={{ color:'var(--foreground)', opacity: 0.8, marginBottom:'2rem', fontSize:'0.95rem', fontWeight: 600 }}>Pick your side and start accumulating ELO & Coins fr fr!</p>
           
           <div style={{ display:'flex', gap:'1.5rem', justifyContent:'center' }}>
-            <button onClick={() => startGame('w')} style={{ padding:'1rem 2rem', borderRadius:12, border:'2px solid rgba(0,0,0,0.1)', background:'#ffffff', color:'#18181b', fontWeight:800, fontSize:'1.1rem', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:'0.4rem', transition:'all 0.2s', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }} onMouseEnter={e=>e.target.style.transform='scale(1.05)'} onMouseLeave={e=>e.target.style.transform='scale(1)'}>
+            <button onClick={() => startGame('w')} className="btn-primary" style={{ padding:'1rem 2rem', display:'flex', flexDirection:'column', alignItems:'center', gap:'0.4rem' }}>
               <span style={{ fontSize:'2rem' }}>♙</span> Play White
             </button>
-            <button onClick={() => startGame('b')} style={{ padding:'1rem 2rem', borderRadius:12, border:'2px solid rgba(0,0,0,0.15)', background:'#18181b', color:'#ffffff', fontWeight:800, fontSize:'1.1rem', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:'0.4rem', transition:'all 0.2s', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }} onMouseEnter={e=>e.target.style.transform='scale(1.05)'} onMouseLeave={e=>e.target.style.transform='scale(1)'}>
+            <button onClick={() => startGame('b')} className="btn-secondary" style={{ padding:'1rem 2rem', display:'flex', flexDirection:'column', alignItems:'center', gap:'0.4rem' }}>
               <span style={{ fontSize:'2rem' }}>♟</span> Play Black
             </button>
           </div>
@@ -644,60 +658,61 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
       <div className="board-grid-wrapper">
         
         {/* Left Column: Board and Clocks */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {/* Board Status / Header */}
-          {/* Board Status / Header */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.06)', padding: '8px 12px', borderRadius: 8 }}>
-            <span style={{ fontSize: '0.85rem', color: 'var(--foreground)', fontWeight: 'bold' }}>
-              Opponent (AI): <b style={{ color: game.turn() !== playerColor ? '#b45309' : 'var(--foreground)' }}>{formatTime(aiTime)}</b>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#ffffff', border: '2px solid var(--border-dark)', padding: '10px 14px', borderRadius: 12, boxShadow: '3px 3px 0px 0px var(--border-dark)' }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--foreground)', fontWeight: '800' }}>
+              Opponent (AI): <b style={{ color: game.turn() !== playerColor ? 'var(--accent-primary)' : 'var(--foreground)' }}>{formatTime(aiTime)}</b>
             </span>
-            <span style={{ fontSize: '0.85rem', textTransform: 'capitalize', color: '#4f46e5', fontWeight: 'bold' }}>
+            <span style={{ fontSize: '0.85rem', textTransform: 'capitalize', color: 'var(--accent-secondary)', fontWeight: '800' }}>
               Difficulty: {difficulty}
             </span>
           </div>
 
           {/* Captured Pieces Black */}
-          <div style={{ display: 'flex', minHeight: 24, gap: 4, opacity: 0.8, fontSize: '1.2rem' }}>
+          <div style={{ display: 'flex', minHeight: 24, gap: 4, opacity: 0.9, fontSize: '1.25rem', paddingLeft: 6 }}>
             {capturedBlack.map((p, idx) => {
               const skinMap = EMOJI_SKINS[activePack] || EMOJI_SKINS.classic;
-              return <span key={idx}>{skinMap[`b${p.toUpperCase()}`]}</span>;
+              return <span key={idx} style={{ filter: 'drop-shadow(1px 1px 0px #000)' }}>{skinMap[`b${p.toUpperCase()}`]}</span>;
             })}
           </div>
 
           {/* Responsive Chessboard Container */}
-          <div style={{ 
-            borderRadius: 16, 
-            overflow: 'hidden', 
-            boxShadow: 'var(--glass-shadow)', 
-            border: '1px solid var(--glass-border)',
-            background: 'var(--glass-bg)',
+          <div className="neo-panel" style={{ 
+            overflow: 'visible', 
             width: '100%',
             maxWidth: '520px',
-            margin: '0 auto'
+            margin: '0 auto',
+            position: 'relative',
+            padding: 4
           }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', width: '100%' }}>
+            {/* Playful Stickers overlapping the board */}
+            <div className="neo-sticker sticker-pink" style={{ top: '-12px', left: '-15px', transform: 'rotate(-8deg)', fontSize: '0.65rem' }}>✨ 200 IQ MOVE</div>
+            <div className="neo-sticker sticker-yellow" style={{ bottom: '-10px', right: '-15px', transform: 'rotate(6deg)', fontSize: '0.65rem' }}>🧠 BIG BRAIN ONLY</div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', width: '100%', borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border-dark)' }}>
               {renderBoard()}
             </div>
           </div>
 
           {/* Captured Pieces White */}
-          <div style={{ display: 'flex', minHeight: 24, gap: 4, opacity: 0.8, fontSize: '1.2rem' }}>
+          <div style={{ display: 'flex', minHeight: 24, gap: 4, opacity: 0.9, fontSize: '1.25rem', paddingLeft: 6 }}>
             {capturedWhite.map((p, idx) => {
               const skinMap = EMOJI_SKINS[activePack] || EMOJI_SKINS.classic;
-              return <span key={idx}>{skinMap[`w${p.toUpperCase()}`]}</span>;
+              return <span key={idx} style={{ filter: 'drop-shadow(1px 1px 0px #000)' }}>{skinMap[`w${p.toUpperCase()}`]}</span>;
             })}
           </div>
 
           {/* Footer info & Clocks */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem', fontWeight: 600, background: 'rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.06)', padding: '8px 12px', borderRadius: 8 }}>
-            <span>Your Time: <b style={{ color: game.turn() === playerColor ? '#b45309' : 'var(--foreground)' }}>{formatTime(playerTime)}</b></span>
-            <span style={{ color: '#4f46e5' }}>Skin: {activePack}</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem', fontWeight: 800, background: '#ffffff', border: '2px solid var(--border-dark)', padding: '10px 14px', borderRadius: 12, boxShadow: '3px 3px 0px 0px var(--border-dark)' }}>
+            <span>Your Time: <b style={{ color: game.turn() === playerColor ? 'var(--accent-primary)' : 'var(--foreground)' }}>{formatTime(playerTime)}</b></span>
+            <span style={{ color: 'var(--accent-secondary)' }}>Skin: {activePack}</span>
           </div>
 
           {gameStatus && (
-            <div style={{ background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.25)', borderRadius: 8, padding: '10px 16px', textAlign: 'center', fontWeight: 700, color: '#7c3aed' }}>
-              {gameStatus}
-              <button onClick={() => setPlayerColor(null)} style={{ marginLeft: 12, background: 'rgba(79,70,229,0.08)', border: '1px solid rgba(79,70,229,0.25)', color: '#4f46e5', padding: '4px 12px', borderRadius: 6, cursor: 'pointer', fontSize: '0.82rem', fontWeight: 'bold' }}>
+            <div style={{ background: 'rgba(124,58,237,0.05)', border: '2px solid var(--border-dark)', borderRadius: 12, padding: '12px 16px', textAlign: 'center', fontWeight: 800, color: 'var(--accent-purple)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, boxShadow: '3px 3px 0px 0px var(--border-dark)' }}>
+              <span>{gameStatus}</span>
+              <button onClick={() => setPlayerColor(null)} className="btn-secondary" style={{ padding: '6px 14px', fontSize: '0.8rem', borderRadius: 8 }}>
                 Reset Match
               </button>
             </div>
@@ -705,27 +720,30 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
         </div>
 
         {/* Right Column: AI speech bubble and Move Log */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {/* AI Speech Bubble */}
-          <div style={{ background: 'rgba(79,70,229,0.06)', border: '1px solid rgba(79,70,229,0.15)', borderRadius: 12, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: '1.6rem' }}>🤖</span>
-            <p style={{ margin: 0, fontSize: '0.85rem', fontStyle: 'italic', color: 'var(--foreground)', opacity: 0.85 }}>{aiPhrase}</p>
+          <div style={{ background: '#ffffff', border: '2px solid var(--border-dark)', borderRadius: 12, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, boxShadow: '3px 3px 0px 0px var(--border-dark)' }}>
+            <span style={{ fontSize: '1.8rem' }}>🤖</span>
+            <p style={{ margin: 0, fontSize: '0.88rem', fontStyle: 'italic', fontWeight: 700, color: 'var(--foreground)' }}>{aiPhrase}</p>
           </div>
 
           {/* Side Panel: Move Log */}
-          <div className="glass-panel" style={{ padding: 15, display: 'flex', flexDirection: 'column', flex: 1, minHeight: 220, maxHeight: 360, overflowY: 'auto', boxSizing: 'border-box' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--glass-border)', paddingBottom: 8, marginBottom: 10 }}>
-              <h3 style={{ fontSize: '1rem', margin: 0 }}>📋 Move Log</h3>
-              <button onClick={() => setPlayerColor(null)} style={{ background: 'rgba(220,38,38,0.08)', border: '1px solid rgba(220,38,38,0.25)', color: '#dc2626', padding: '4px 12px', borderRadius: 8, cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700 }}>
+          <div className="neo-panel" style={{ padding: 18, display: 'flex', flexDirection: 'column', flex: 1, minHeight: 220, maxHeight: 360, overflowY: 'auto', boxSizing: 'border-box', background: '#ffffff', position: 'relative' }}>
+            {/* Sticker */}
+            <div className="neo-sticker sticker-purple" style={{ top: '-10px', right: '-12px', transform: 'rotate(-4deg)', fontSize: '0.62rem' }}>📜 HISTORY</div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid var(--border-dark)', paddingBottom: 8, marginBottom: 10 }}>
+              <h3 style={{ fontSize: '1.05rem', margin: 0, fontWeight: 800 }}>Move Log</h3>
+              <button onClick={() => setPlayerColor(null)} style={{ background: '#fee2e2', border: '2px solid var(--border-dark)', color: '#b91c1c', padding: '6px 12px', borderRadius: 8, cursor: 'pointer', fontSize: '0.8rem', fontWeight: 800, boxShadow: '2px 2px 0px 0px var(--border-dark)', transition: 'all 0.1s' }} onMouseEnter={e=>e.target.style.transform='translate(-1px,-1px)'} onMouseLeave={e=>e.target.style.transform='none'}>
                 🏳️ Resign
               </button>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '36px 1fr 1fr', gap: '6px 8px', fontSize: '0.85rem', color: 'var(--foreground)', overflowY: 'auto' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '36px 1fr 1fr', gap: '6px 8px', fontSize: '0.88rem', color: 'var(--foreground)', overflowY: 'auto', fontWeight: 700 }}>
               {Array.from({ length: Math.ceil(moveHistory.length / 2) }).map((_, i) => (
                 <div key={i} style={{ display: 'contents' }}>
                   <span style={{ opacity: 0.5 }}>{i + 1}.</span>
-                  <span style={{ fontWeight: 600 }}>{moveHistory[i * 2]}</span>
-                  <span style={{ opacity: 0.75 }}>{moveHistory[i * 2 + 1] || ''}</span>
+                  <span>{moveHistory[i * 2]}</span>
+                  <span style={{ opacity: 0.8 }}>{moveHistory[i * 2 + 1] || ''}</span>
                 </div>
               ))}
             </div>
@@ -737,7 +755,7 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
       {/* Toast Notifications */}
       <div style={{ position: 'fixed', top: 20, right: 20, display: 'flex', flexDirection: 'column', gap: '0.5rem', zIndex: 999, pointerEvents: 'none' }}>
         {toasts.map(t => (
-          <div key={t.id} style={{ background: `${t.color}22`, border: `1px solid ${t.color}66`, borderRadius: 10, padding: '10px 16px', color: '#fff', fontWeight: 700, fontSize: '0.9rem', boxShadow: `0 4px 20px ${t.color}44`, animation: 'fadeSlideIn 0.3s ease', maxWidth: 280 }}>
+          <div key={t.id} style={{ background: '#ffffff', border: `2px solid var(--border-dark)`, borderRadius: 10, padding: '10px 16px', color: 'var(--foreground)', fontWeight: 800, fontSize: '0.9rem', boxShadow: `4px 4px 0px 0px var(--border-dark)`, animation: 'fadeSlideIn 0.3s ease', maxWidth: 280 }}>
             {t.text}
           </div>
         ))}
@@ -747,39 +765,40 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
       {rewardPopup && (
         <div style={{
           position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-          background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)',
+          background: 'rgba(15,23,42,0.4)', backdropFilter: 'blur(8px)',
           zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center'
         }}>
-          <div style={{
-            background: 'var(--glass-bg)',
-            backdropFilter: 'blur(16px)',
-            border: '1px solid var(--glass-border)',
-            borderRadius: 20,
-            padding: '2.5rem',
+          <div className="neo-panel" style={{
+            background: '#ffffff',
+            padding: '2.5rem 2rem',
             textAlign: 'center',
-            boxShadow: 'var(--glass-shadow)',
             width: '90%',
             maxWidth: 380,
+            position: 'relative',
             animation: 'scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
           }}>
+            {/* Stickers on reward popup */}
+            <div className="neo-sticker sticker-pink" style={{ top: '-15px', right: '-15px', transform: 'rotate(6deg)' }}>📈 GG WP!</div>
+            <div className="neo-sticker sticker-green" style={{ bottom: '-15px', left: '-15px', transform: 'rotate(-6deg)' }}>✨ BIG AURA</div>
+
             <div style={{ fontSize: '3.5rem', marginBottom: '1rem', animation: 'bounce 2s infinite' }}>🎉</div>
-            <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.4rem', fontWeight: 800, color: 'var(--foreground)' }}>Match Completed</h3>
-            <p style={{ margin: '0 0 1.5rem', fontSize: '0.9rem', opacity: 0.7 }}>Here are your rewards for finishing the battle:</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2rem' }}>
+            <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.5rem', fontWeight: 800, color: 'var(--foreground)' }}>Match Completed</h3>
+            <p style={{ margin: '0 0 1.5rem', fontSize: '0.92rem', opacity: 0.8, fontWeight: 600 }}>Here are your rewards for finishing the battle:</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '2rem' }}>
               {rewardPopup.map((msg, i) => {
                 const isElo = msg.includes('ELO');
                 const icon = isElo ? '👑' : '🪙';
                 const color = isElo ? '#b45309' : '#059669';
-                const bg = isElo ? 'rgba(217,119,6,0.08)' : 'rgba(16,185,129,0.08)';
+                const bg = isElo ? 'rgba(217,119,6,0.05)' : 'rgba(16,185,129,0.05)';
                 return (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '12px', borderRadius: 12, background: bg, border: `1px solid ${isElo ? 'rgba(217,119,6,0.15)' : 'rgba(16,185,129,0.15)'}`, color: color, fontWeight: 800, fontSize: '1.1rem' }}>
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '12px', borderRadius: 12, background: bg, border: '2px solid var(--border-dark)', color: color, fontWeight: 900, fontSize: '1.15rem', boxShadow: '3px 3px 0px 0px var(--border-dark)' }}>
                     <span>{icon}</span>
                     <span>{msg.replace('🪙', '').replace('MemeCoins', '').trim()}</span>
                   </div>
                 );
               })}
             </div>
-            <button className="btn-primary" onClick={() => setRewardPopup(null)} style={{ width: '100%', padding: '12px 24px', fontSize: '1rem', borderRadius: 10 }}>
+            <button className="btn-primary" onClick={() => setRewardPopup(null)} style={{ width: '100%', padding: '12px 24px', fontSize: '1.05rem' }}>
               Awesome!
             </button>
           </div>

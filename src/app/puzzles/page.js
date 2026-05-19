@@ -232,10 +232,10 @@ export default function PuzzlesPage() {
         const hasPiece = !!piece;
 
         let bgStyle = isDark 
-          ? 'linear-gradient(135deg, #4f46e5 0%, #3730a3 100%)'
-          : 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)';
+          ? '#B8C4A8'
+          : '#FAF8F5';
 
-        if (isSelected) bgStyle = 'rgba(251, 191, 36, 0.7)';
+        if (isSelected) bgStyle = '#f59e0b';
 
         let pieceDisplay = null;
         if (piece) {
@@ -301,7 +301,7 @@ export default function PuzzlesPage() {
       <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '3rem', animation: 'spin 1s linear infinite' }}>♟️</div>
-          <p style={{ color: '#818cf8', fontWeight: 600 }}>Loading brainrot puzzles...</p>
+          <p style={{ color: 'var(--accent-primary)', fontWeight: 800 }}>Loading brainrot puzzles...</p>
         </div>
       </main>
     );
@@ -310,33 +310,36 @@ export default function PuzzlesPage() {
   if (!user) {
     return (
       <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
-        <div className="glass-panel" style={{ padding: '3rem', textAlign: 'center', maxWidth: '400px' }}>
-          <p style={{ fontSize: '3rem' }}>🔒</p>
-          <h2>Log In First</h2>
-          <p style={{ opacity: 0.7, margin: '1rem 0' }}>You need an active account to earn ELO and MemeCoins from puzzles!</p>
-          <Link href="/"><button className="btn-primary">Go to Login</button></Link>
+        <div className="neo-panel" style={{ padding: '3rem 2rem', textAlign: 'center', maxWidth: '400px', background: '#ffffff', position: 'relative' }}>
+          {/* Sticker */}
+          <div className="neo-sticker sticker-pink" style={{ top: '-15px', right: '-15px', transform: 'rotate(6deg)' }}>🔒 RESTRICTED</div>
+
+          <p style={{ fontSize: '3rem', margin: 0 }}>🔒</p>
+          <h2 style={{ fontSize: '1.6rem', fontWeight: 900, margin: '10px 0' }}>Log In First</h2>
+          <p style={{ opacity: 0.8, margin: '1rem 0', fontSize: '0.9rem', fontWeight: 600 }}>You need an active account to earn ELO and MemeCoins from puzzles!</p>
+          <Link href="/"><button className="btn-primary" style={{ width: '100%' }}>Go to Login</button></Link>
         </div>
       </main>
     );
   }
 
   return (
-    <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '1.5rem', gap: '1.5rem' }}>
+    <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2.5rem 1.5rem', gap: '2rem' }}>
       {/* Header */}
-      <div style={{ width: '100%', maxWidth: '1000px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ width: '100%', maxWidth: '1000px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
         <Link href="/">
           <button className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <ArrowLeft size={18} /> Back to Menu
           </button>
         </Link>
-        <h2 className="text-gradient" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.6rem', fontWeight: 800 }}>
-          <Sparkles size={22} color="#fbbf24" /> Brainrot Puzzles
+        <h2 className="text-gradient" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '2.2rem', fontWeight: 900 }}>
+          <Sparkles size={26} color="#d97706" /> Brainrot Puzzles
         </h2>
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(217,119,6,0.08)', border: '1px solid rgba(217,119,6,0.25)', padding: '6px 12px', borderRadius: '18px', color: '#b45309', fontWeight: 'bold', fontSize: '0.9rem' }}>
-            🪙 {user.meme_coins}
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: '#fef3c7', border: '2px solid var(--border-dark)', padding: '6px 14px', borderRadius: '14px', color: '#b45309', fontWeight: 900, fontSize: '0.9rem', boxShadow: '2px 2px 0px 0px var(--border-dark)' }}>
+            🪙 {user.meme_coins.toLocaleString()}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(79,70,229,0.08)', border: '1px solid rgba(79,70,229,0.25)', padding: '6px 12px', borderRadius: '18px', color: '#4f46e5', fontWeight: 'bold', fontSize: '0.9rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(79,70,229,0.05)', border: '2px solid var(--border-dark)', padding: '6px 14px', borderRadius: '14px', color: 'var(--accent-primary)', fontWeight: 900, fontSize: '0.9rem', boxShadow: '2px 2px 0px 0px var(--border-dark)' }}>
             👑 {user.elo} ELO
           </div>
         </div>
@@ -345,9 +348,12 @@ export default function PuzzlesPage() {
       {/* Main Content Layout */}
       <div className="puzzles-grid" style={{ maxWidth: '1000px', alignItems: 'start' }}>
         {/* Left Side: Puzzle list */}
-        <div className="glass-panel" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '550px', overflowY: 'auto' }}>
-          <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>📂 Selection</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+        <div className="neo-panel" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '550px', overflowY: 'auto', background: '#ffffff', position: 'relative' }}>
+          {/* Sticker */}
+          <div className="neo-sticker sticker-purple" style={{ top: '-12px', left: '-15px', transform: 'rotate(-4deg)', fontSize: '0.62rem' }}>🧩 PUZZLE PACK</div>
+
+          <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, borderBottom: '2px solid var(--border-dark)', paddingBottom: '6px' }}>Selection</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
             {puzzles.map(p => {
               const isSelected = selectedPuzzle?.id === p.id;
               return (
@@ -357,14 +363,17 @@ export default function PuzzlesPage() {
                   style={{
                     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                     padding: '12px 16px', borderRadius: 12, 
-                    border: isSelected ? '1px solid rgba(217,119,6,0.25)' : '1px solid rgba(0,0,0,0.06)',
-                    background: isSelected ? 'rgba(217,119,6,0.08)' : 'rgba(0,0,0,0.02)',
-                    color: 'var(--foreground)', cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s'
+                    border: '2px solid var(--border-dark)',
+                    background: isSelected ? 'rgba(217,119,6,0.05)' : '#ffffff',
+                    color: 'var(--foreground)', cursor: 'pointer', textAlign: 'left',
+                    boxShadow: isSelected ? '1px 1px 0px var(--border-dark)' : '3px 3px 0px 0px var(--border-dark)',
+                    transform: isSelected ? 'translate(2px, 2px)' : 'none',
+                    transition: 'all 0.1s'
                   }}
                 >
                   <div>
-                    <p style={{ fontWeight: 800, margin: 0, fontSize: '0.9rem' }}>{p.title}</p>
-                    <p style={{ fontSize: '0.72rem', opacity: 0.6, margin: '2px 0 0 0', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <p style={{ fontWeight: 900, margin: 0, fontSize: '0.9rem' }}>{p.title}</p>
+                    <p style={{ fontSize: '0.78rem', opacity: 0.8, margin: '4px 0 0 0', display: 'flex', alignItems: 'center', gap: '0.3rem', fontWeight: 700 }}>
                       <Award size={12} color="#b45309" /> +{p.rewardCoins} MC · +{p.rewardElo} ELO
                     </p>
                   </div>
@@ -378,21 +387,24 @@ export default function PuzzlesPage() {
         {/* Middle/Right Side: Interactive Chess Board & Detail Panel */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           {selectedPuzzle && (
-            <div className="glass-panel" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div className="neo-panel" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.2rem', background: '#ffffff', position: 'relative' }}>
+              {/* Sticker */}
+              <div className="neo-sticker sticker-pink" style={{ top: '-15px', right: '-15px', transform: 'rotate(6deg)', fontSize: '0.65rem' }}>🔥 100% SOLVABLE</div>
+
               <div>
-                <h3 style={{ margin: '0 0 4px 0', fontSize: '1.2rem', fontWeight: 800 }}>{selectedPuzzle.title}</h3>
-                <p style={{ margin: 0, fontSize: '0.85rem', opacity: 0.75 }}>{selectedPuzzle.description}</p>
+                <h3 style={{ margin: '0 0 4px 0', fontSize: '1.3rem', fontWeight: 900 }}>{selectedPuzzle.title}</h3>
+                <p style={{ margin: 0, fontSize: '0.88rem', opacity: 0.75, fontWeight: 600 }}>{selectedPuzzle.description}</p>
               </div>
 
               {/* Side notice / Turn indicator */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.06)', padding: '8px 12px', borderRadius: 8, fontSize: '0.82rem' }}>
-                <span>Turn: <b style={{ color: selectedPuzzle.turn === 'w' ? 'var(--foreground)' : '#4f46e5' }}>{selectedPuzzle.turn === 'w' ? 'White' : 'Black'}</b></span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#ffffff', border: '2px solid var(--border-dark)', padding: '10px 14px', borderRadius: 12, fontSize: '0.88rem', fontWeight: 800, boxShadow: '3px 3px 0px 0px var(--border-dark)' }}>
+                <span>Turn: <b style={{ color: selectedPuzzle.turn === 'w' ? 'var(--accent-primary)' : 'var(--accent-secondary)' }}>{selectedPuzzle.turn === 'w' ? 'White' : 'Black'}</b></span>
                 <button
                   onClick={() => setHintShown(true)}
                   style={{
                     display: 'flex', alignItems: 'center', gap: '0.3rem',
                     background: 'none', border: 'none', color: '#b45309',
-                    cursor: 'pointer', fontWeight: 'bold', fontSize: '0.82rem',
+                    cursor: 'pointer', fontWeight: 900, fontSize: '0.85rem',
                     textDecoration: 'underline'
                   }}
                 >
@@ -401,7 +413,7 @@ export default function PuzzlesPage() {
               </div>
 
               {hintShown && (
-                <div style={{ background: 'rgba(217,119,6,0.08)', border: '1px solid rgba(217,119,6,0.2)', borderRadius: 8, padding: '10px', fontSize: '0.8rem', color: '#b45309' }}>
+                <div style={{ background: '#fef3c7', border: '2px solid var(--border-dark)', borderRadius: 10, padding: '12px', fontSize: '0.85rem', color: '#b45309', fontWeight: 700, boxShadow: '2px 2px 0px var(--border-dark)' }}>
                   💡 Hint: {selectedPuzzle.hint}
                 </div>
               )}
@@ -410,14 +422,15 @@ export default function PuzzlesPage() {
               <div style={{ 
                 borderRadius: 12, 
                 overflow: 'hidden', 
-                border: '1px solid var(--glass-border)',
-                boxShadow: 'var(--glass-shadow)',
-                background: 'var(--glass-bg)',
+                border: '2px solid var(--border-dark)',
+                boxShadow: '3px 3px 0px 0px var(--border-dark)',
+                background: '#ffffff',
                 width: '100%',
                 maxWidth: '440px',
-                margin: '0 auto'
+                margin: '0 auto',
+                padding: 4
               }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', width: '100%' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', width: '100%', borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-dark)' }}>
                   {renderBoard()}
                 </div>
               </div>
@@ -426,11 +439,12 @@ export default function PuzzlesPage() {
               {feedback && (
                 <div style={{
                   display: 'flex', alignItems: 'center', gap: '0.5rem',
-                  background: feedback.correct ? 'rgba(16,185,129,0.08)' : 'rgba(220,38,38,0.08)',
-                  border: `1px solid ${feedback.correct ? 'rgba(16,185,129,0.2)' : 'rgba(220,38,38,0.2)'}`,
-                  borderRadius: 10, padding: '12px', fontSize: '0.85rem',
-                  color: feedback.correct ? '#059669' : '#dc2626',
-                  fontWeight: 700, animation: 'pulse 1.5s infinite'
+                  background: feedback.correct ? '#d1fae5' : '#fee2e2',
+                  border: '2px solid var(--border-dark)',
+                  borderRadius: 10, padding: '12px', fontSize: '0.88rem',
+                  color: feedback.correct ? '#047857' : '#b91c1c',
+                  fontWeight: 800, boxShadow: '2px 2px 0px var(--border-dark)',
+                  animation: 'pulse 1.5s infinite'
                 }}>
                   {feedback.correct ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
                   <span>{feedback.message}</span>
@@ -451,7 +465,7 @@ export default function PuzzlesPage() {
                   className="btn-secondary"
                   style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-                    padding: '10px 16px', borderRadius: 10, fontSize: '0.85rem', fontWeight: 'bold'
+                    padding: '10px 16px', borderRadius: 10, fontSize: '0.88rem', fontWeight: 800
                   }}
                 >
                   🔄 Reset & Replay Puzzle
@@ -466,33 +480,34 @@ export default function PuzzlesPage() {
       {rewardPopup && (
         <div style={{
           position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-          background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)',
+          background: 'rgba(15,23,42,0.4)', backdropFilter: 'blur(8px)',
           zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center'
         }}>
-          <div style={{
-            background: 'var(--glass-bg)',
-            backdropFilter: 'blur(16px)',
-            border: '1px solid var(--glass-border)',
-            borderRadius: 20,
-            padding: '2.5rem',
+          <div className="neo-panel" style={{
+            background: '#ffffff',
+            padding: '2.5rem 2rem',
             textAlign: 'center',
-            boxShadow: 'var(--glass-shadow)',
             width: '90%',
             maxWidth: 380,
+            position: 'relative',
             animation: 'scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
           }}>
+            {/* Stickers on reward popup */}
+            <div className="neo-sticker sticker-pink" style={{ top: '-15px', right: '-15px', transform: 'rotate(6deg)' }}>📈 PUZZLE CLEAR!</div>
+            <div className="neo-sticker sticker-green" style={{ bottom: '-15px', left: '-15px', transform: 'rotate(-6deg)' }}>✨ 300 IQ</div>
+
             <div style={{ fontSize: '3.5rem', marginBottom: '1rem', animation: 'bounce 2s infinite' }}>🎉</div>
-            <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.4rem', fontWeight: 800, color: 'var(--foreground)' }}>{rewardPopup.title}</h3>
-            <p style={{ margin: '0 0 1.5rem', fontSize: '0.9rem', opacity: 0.7 }}>{rewardPopup.message}</p>
+            <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.5rem', fontWeight: 900, color: 'var(--foreground)' }}>{rewardPopup.title}</h3>
+            <p style={{ margin: '0 0 1.5rem', fontSize: '0.92rem', opacity: 0.8, fontWeight: 600 }}>{rewardPopup.message}</p>
             {rewardPopup.rewards && rewardPopup.rewards.length > 0 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '2rem' }}>
                 {rewardPopup.rewards.map((msg, i) => {
                   const isElo = msg.includes('ELO');
                   const icon = isElo ? '👑' : '🪙';
                   const color = isElo ? '#b45309' : '#059669';
-                  const bg = isElo ? 'rgba(217,119,6,0.08)' : 'rgba(16,185,129,0.08)';
+                  const bg = isElo ? 'rgba(217,119,6,0.05)' : 'rgba(16,185,129,0.05)';
                   return (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '12px', borderRadius: 12, background: bg, border: `1px solid ${isElo ? 'rgba(217,119,6,0.15)' : 'rgba(16,185,129,0.15)'}`, color: color, fontWeight: 800, fontSize: '1.1rem' }}>
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '12px', borderRadius: 12, background: bg, border: '2px solid var(--border-dark)', color: color, fontWeight: 900, fontSize: '1.15rem', boxShadow: '3px 3px 0px 0px var(--border-dark)' }}>
                       <span>{icon}</span>
                       <span>{msg.replace('🪙', '').replace('MemeCoins', '').trim()}</span>
                     </div>
@@ -500,7 +515,7 @@ export default function PuzzlesPage() {
                 })}
               </div>
             )}
-            <button className="btn-primary" onClick={() => setRewardPopup(null)} style={{ width: '100%', padding: '12px 24px', fontSize: '1rem', borderRadius: 10 }}>
+            <button className="btn-primary" onClick={() => setRewardPopup(null)} style={{ width: '100%', padding: '12px 24px', fontSize: '1.05rem' }}>
               Awesome!
             </button>
           </div>
