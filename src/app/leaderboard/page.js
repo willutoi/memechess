@@ -46,9 +46,9 @@ export default function Leaderboard() {
             gap: '0.5rem',
             padding: '10px 20px',
             borderRadius: '12px',
-            border: activeTab === 'elo' ? '2px solid #6366f1' : '1px solid rgba(255,255,255,0.1)',
-            background: activeTab === 'elo' ? 'rgba(99,102,241,0.2)' : 'rgba(0,0,0,0.4)',
-            color: activeTab === 'elo' ? '#e0e7ff' : '#a5b4fc',
+            border: activeTab === 'elo' ? '2px solid var(--accent-primary)' : '1px solid rgba(15,23,42,0.08)',
+            background: activeTab === 'elo' ? 'rgba(79,70,229,0.08)' : 'rgba(15,23,42,0.04)',
+            color: activeTab === 'elo' ? 'var(--accent-primary)' : '#64748b',
             fontWeight: 700,
             cursor: 'pointer',
             transition: 'all 0.2s'
@@ -64,9 +64,9 @@ export default function Leaderboard() {
             gap: '0.5rem',
             padding: '10px 20px',
             borderRadius: '12px',
-            border: activeTab === 'coins' ? '2px solid #a855f7' : '1px solid rgba(255,255,255,0.1)',
-            background: activeTab === 'coins' ? 'rgba(168,85,247,0.2)' : 'rgba(0,0,0,0.4)',
-            color: activeTab === 'coins' ? '#f3e8ff' : '#d8b4fe',
+            border: activeTab === 'coins' ? '2px solid var(--accent-secondary)' : '1px solid rgba(15,23,42,0.08)',
+            background: activeTab === 'coins' ? 'rgba(124,58,237,0.08)' : 'rgba(15,23,42,0.04)',
+            color: activeTab === 'coins' ? 'var(--accent-secondary)' : '#64748b',
             fontWeight: 700,
             cursor: 'pointer',
             transition: 'all 0.2s'
@@ -79,7 +79,7 @@ export default function Leaderboard() {
       {/* Leaderboard Table Container */}
       <div className="glass-panel" style={{ width: '100%', maxWidth: '650px', padding: '1.5rem 2rem' }}>
         {users.length === 0 ? (
-          <div style={{ textAlign: 'center', color: '#a5b4fc', padding: '2rem 0' }}>Loading rankings...</div>
+          <div style={{ textAlign: 'center', color: '#64748b', padding: '2rem 0' }}>Loading rankings...</div>
         ) : (
           users.map((u, i) => {
             const rank = i + 1;
@@ -93,7 +93,7 @@ export default function Leaderboard() {
                   justifyContent: 'space-between', 
                   alignItems: 'center', 
                   padding: '1.1rem 0', 
-                  borderBottom: '1px solid rgba(255,255,255,0.06)',
+                  borderBottom: '1px solid var(--glass-border)',
                   animation: 'fadeIn 0.3s ease'
                 }}
               >
@@ -101,22 +101,22 @@ export default function Leaderboard() {
                   <span style={{ 
                     fontSize: '1.3rem', 
                     fontWeight: '900', 
-                    color: rank === 1 ? '#ffd700' : rank === 2 ? '#e2e8f0' : rank === 3 ? '#b45309' : '#818cf8',
+                    color: rank === 1 ? '#d97706' : rank === 2 ? '#475569' : rank === 3 ? '#b45309' : 'var(--accent-primary)',
                     minWidth: 35
                   }}>
                     #{rank}
                   </span>
                   <div>
-                    <span style={{ fontSize: '1.15rem', fontWeight: 600, color: '#fff' }}>
+                    <span style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--foreground)' }}>
                       {u.username}
                     </span>
                     {isBot && (
                       <span style={{ 
                         marginLeft: 8, 
                         fontSize: '0.65rem', 
-                        background: 'rgba(99,102,241,0.25)', 
-                        border: '1px solid #6366f1',
-                        color: '#a5b4fc', 
+                        background: 'rgba(79,70,229,0.08)', 
+                        border: '1px solid var(--accent-primary)',
+                        color: 'var(--accent-primary)', 
                         padding: '2px 6px', 
                         borderRadius: 4, 
                         fontWeight: 'bold',
@@ -130,16 +130,16 @@ export default function Leaderboard() {
 
                 <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
                   <div style={{ textAlign: 'right' }}>
-                    <div style={{ color: '#fbbf24', fontWeight: 800, fontSize: '1.1rem' }}>
+                    <div style={{ color: '#b45309', fontWeight: 800, fontSize: '1.1rem' }}>
                       {u.elo} <span style={{ fontSize: '0.75rem', opacity: 0.8 }}>ELO</span>
                     </div>
-                    <div style={{ fontSize: '0.72rem', opacity: 0.6, color: '#a5b4fc' }}>
+                    <div style={{ fontSize: '0.72rem', opacity: 0.6, color: 'var(--foreground)' }}>
                       {u.wins || 0} Wins
                     </div>
                   </div>
 
-                  <div style={{ background: 'rgba(255,255,255,0.04)', padding: '6px 12px', borderRadius: 8, minWidth: 90, textAlign: 'center' }}>
-                    <span style={{ color: '#c084fc', fontWeight: 'bold', fontSize: '0.9rem' }}>
+                  <div style={{ background: 'rgba(124,58,237,0.08)', padding: '6px 12px', borderRadius: 8, minWidth: 90, textAlign: 'center' }}>
+                    <span style={{ color: 'var(--accent-secondary)', fontWeight: 'bold', fontSize: '0.9rem' }}>
                       {u.meme_coins.toLocaleString()} MC
                     </span>
                   </div>

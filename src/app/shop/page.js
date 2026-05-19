@@ -102,7 +102,16 @@ export default function Shop() {
     }
   };
 
-  if (!user) return <div style={{ color: 'white', padding: '2rem', textAlign: 'center' }}>Loading user data...</div>;
+  if (!user) {
+    return (
+      <div style={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center', color: 'var(--foreground)' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '3rem', animation: 'spin 1s linear infinite' }}>♟️</div>
+          <p style={{ fontWeight: 600 }}>Loading shop goods...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem' }}>
@@ -114,7 +123,7 @@ export default function Shop() {
           </button>
         </Link>
         <h2 className="text-gradient" style={{ fontSize: '2.2rem', fontWeight: 800 }}>Meme Shop</h2>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,215,0,0.1)', border: '1px solid rgba(255,215,0,0.3)', padding: '0.6rem 1.2rem', borderRadius: '24px', color: '#ffd700', fontWeight: 'bold' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(217,119,6,0.08)', border: '1px solid rgba(217,119,6,0.25)', padding: '0.6rem 1.2rem', borderRadius: '24px', color: '#b45309', fontWeight: 'bold' }}>
           <Coins size={20} /> {user.meme_coins} MC
         </div>
       </div>
@@ -124,7 +133,7 @@ export default function Shop() {
         
         {/* Visual Skins */}
         <div className="glass-panel" style={{ padding: '2rem' }}>
-          <h3 style={{ marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem', fontSize: '1.4rem' }}>Visual Skins</h3>
+          <h3 style={{ marginBottom: '1.5rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem', fontSize: '1.4rem', fontWeight: 800 }}>Visual Skins</h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
             {skins.map(s => {
               const isEquipped = user.active_skin_pack === s.internal;
@@ -133,14 +142,14 @@ export default function Shop() {
                 <div 
                   key={s.name} 
                   style={{ 
-                    background: 'rgba(255,255,255,0.02)', 
-                    border: `1px solid ${isEquipped ? 'rgba(99,102,241,0.5)' : 'rgba(255,255,255,0.06)'}`, 
+                    background: 'rgba(0,0,0,0.015)', 
+                    border: `1px solid ${isEquipped ? '#4f46e5' : 'var(--glass-border)'}`, 
                     borderRadius: '16px', 
                     padding: '1rem',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
-                    boxShadow: isEquipped ? '0 0 20px rgba(99,102,241,0.15)' : 'none',
+                    boxShadow: isEquipped ? '0 8px 20px -6px rgba(79, 70, 229, 0.15)' : 'none',
                     transition: 'all 0.25s ease'
                   }}
                 >
@@ -155,7 +164,7 @@ export default function Shop() {
                         objectFit: 'cover', 
                         borderRadius: '12px',
                         marginBottom: '10px',
-                        border: '1px solid rgba(255,255,255,0.08)'
+                        border: '1px solid rgba(0,0,0,0.05)'
                       }} 
                     />
                     <h4 style={{ fontWeight: '800', fontSize: '1.1rem', marginBottom: '4px' }}>{s.name}</h4>
@@ -171,7 +180,7 @@ export default function Shop() {
 
                   <div>
                     {isEquipped ? (
-                      <button disabled style={{ width: '100%', padding: '8px 0', borderRadius: '8px', border: '1px solid #6366f1', color: '#6366f1', background: 'rgba(99,102,241,0.1)', cursor: 'default', fontWeight: 'bold' }}>✓ Equipped</button>
+                      <button disabled style={{ width: '100%', padding: '8px 0', borderRadius: '8px', border: '1px solid #4f46e5', color: '#4f46e5', background: 'rgba(79,70,229,0.08)', cursor: 'default', fontWeight: 'bold' }}>✓ Equipped</button>
                     ) : (
                       <button onClick={() => handleBuy(s, 'skin')} className="btn-primary" style={{ width: '100%', padding: '8px 0', fontSize: '0.9rem', fontWeight: 'bold' }}>
                         {isOwned || s.price === 0 ? '⚡ Equip Pack' : `Buy for ${s.price} MC`}
@@ -186,7 +195,7 @@ export default function Shop() {
 
         {/* Audio Packs */}
         <div className="glass-panel" style={{ padding: '2rem' }}>
-          <h3 style={{ marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem', fontSize: '1.4rem' }}>Audio Packs</h3>
+          <h3 style={{ marginBottom: '1.5rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem', fontSize: '1.4rem', fontWeight: 800 }}>Audio Packs</h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
             {audios.map(a => {
               const isEquipped = user.active_audio_pack === a.internal;
@@ -196,11 +205,12 @@ export default function Shop() {
                   key={a.name} 
                   className="audio-pack-row"
                   style={{ 
-                    background: 'rgba(255,255,255,0.02)',
-                    border: `1px solid ${isEquipped ? 'rgba(168,85,247,0.4)' : 'rgba(255,255,255,0.06)'}`,
+                    background: 'rgba(0,0,0,0.015)',
+                    border: `1px solid ${isEquipped ? '#7c3aed' : 'var(--glass-border)'}`,
                     borderRadius: '12px',
                     transition: 'all 0.2s',
-                    padding: '1.2rem'
+                    padding: '1.2rem',
+                    boxShadow: isEquipped ? '0 8px 20px -6px rgba(124, 58, 237, 0.12)' : 'none'
                   }}
                 >
                   <div>
@@ -209,7 +219,7 @@ export default function Shop() {
                   </div>
                   <div>
                     {isEquipped ? (
-                      <button disabled style={{ padding: '8px 20px', borderRadius: '8px', border: '1px solid #a855f7', color: '#a855f7', background: 'rgba(168,85,247,0.1)', fontWeight: 'bold' }}>Equipped</button>
+                      <button disabled style={{ padding: '8px 20px', borderRadius: '8px', border: '1px solid #7c3aed', color: '#7c3aed', background: 'rgba(124,58,237,0.08)', fontWeight: 'bold' }}>✓ Equipped</button>
                     ) : (
                       <button onClick={() => handleBuy(a, 'audio')} className="btn-primary" style={{ padding: '8px 20px', fontSize: '0.9rem', fontWeight: 'bold' }}>
                         {isOwned || a.price === 0 ? 'Equip' : `Buy for ${a.price} MC`}

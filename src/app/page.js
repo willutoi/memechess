@@ -145,15 +145,15 @@ export default function Home() {
           <p style={{ opacity: 0.6, marginBottom: '2rem', fontSize: '0.9rem' }}>The ultimate brainrot chess experience</p>
 
           {/* Tab switcher */}
-          <div style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', borderRadius: 10, padding: 4, marginBottom: '1.5rem', gap: 4 }}>
+          <div style={{ display: 'flex', background: 'rgba(15,23,42,0.04)', border: '1px solid rgba(15,23,42,0.05)', borderRadius: 12, padding: 4, marginBottom: '1.5rem', gap: 4 }}>
             {['login','register'].map(mode => (
               <button
                 key={mode}
                 onClick={() => { setAuthMode(mode); setAuthError(''); }}
                 style={{
                   flex: 1, padding: '8px', borderRadius: 8, border: 'none',
-                  background: authMode === mode ? 'linear-gradient(135deg,#6366f1,#a855f7)' : 'transparent',
-                  color: authMode === mode ? '#fff' : '#818cf8',
+                  background: authMode === mode ? 'linear-gradient(135deg,var(--accent-primary),var(--accent-secondary))' : 'transparent',
+                  color: authMode === mode ? '#fff' : 'var(--accent-primary)',
                   fontWeight: 700, cursor: 'pointer', fontSize: '0.9rem', transition: 'all 0.2s',
                   textTransform: 'capitalize'
                 }}
@@ -169,7 +169,6 @@ export default function Home() {
               placeholder="Username"
               value={usernameInput}
               onChange={(e) => setUsernameInput(e.target.value)}
-              style={{ padding: '12px 16px', borderRadius: '10px', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.15)', color: 'white', fontSize: '1rem', outline: 'none' }}
               required
               minLength={2}
               maxLength={24}
@@ -179,18 +178,17 @@ export default function Home() {
               placeholder={authMode === 'register' ? 'Create a password' : 'Password'}
               value={passwordInput}
               onChange={(e) => setPasswordInput(e.target.value)}
-              style={{ padding: '12px 16px', borderRadius: '10px', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.15)', color: 'white', fontSize: '1rem', outline: 'none' }}
               required
               minLength={3}
             />
             {authError && (
-              <div style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.35)', borderRadius: 8, padding: '8px 12px', color: '#f87171', fontSize: '0.85rem', fontWeight: 600 }}>
+              <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '10px 14px', color: '#dc2626', fontSize: '0.85rem', fontWeight: 600 }}>
                 ⚠️ {authError}
               </div>
             )}
-            <button type="submit" className="btn-primary" disabled={authLoading} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '13px', fontSize: '1rem', opacity: authLoading ? 0.7 : 1 }}>
+            <button type="submit" className="btn-primary" disabled={authLoading} style={{ width: '100%', padding: '14px', fontSize: '1rem' }}>
               {authMode === 'login' ? <LogIn size={20} /> : <UserPlus size={20} />}
-              {authLoading ? 'Loading...' : authMode === 'login' ? 'Enter the Arena' : 'Create Account'}
+              {authLoading ? 'Entering...' : authMode === 'login' ? 'Enter the Arena' : 'Create Account'}
             </button>
           </form>
 
@@ -219,14 +217,14 @@ export default function Home() {
             <button
               onClick={() => setShowAvatarPicker(!showAvatarPicker)}
               title="Change avatar"
-              style={{ background: 'rgba(99,102,241,0.2)', border: '2px solid rgba(99,102,241,0.5)', borderRadius: '50%', width: 52, height: 52, fontSize: '1.7rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
+              style={{ background: 'rgba(79,70,229,0.08)', border: '2px solid rgba(79,70,229,0.25)', borderRadius: '50%', width: 52, height: 52, fontSize: '1.7rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
             >
               {user.avatar || '🧠'}
             </button>
             {showAvatarPicker && (
-              <div style={{ position: 'absolute', top: 60, left: 0, background: '#18181b', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 12, padding: '0.75rem', display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 6, zIndex: 100, boxShadow: '0 8px 32px rgba(0,0,0,0.6)' }}>
+              <div style={{ position: 'absolute', top: 60, left: 0, background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: 12, padding: '0.75rem', display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 6, zIndex: 100, boxShadow: 'var(--glass-shadow)' }}>
                 {AVATARS.map(av => (
-                  <button key={av} onClick={() => handleAvatarSelect(av)} style={{ fontSize: '1.5rem', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, transition: 'background 0.15s' }} onMouseEnter={e => e.target.style.background='rgba(255,255,255,0.1)'} onMouseLeave={e => e.target.style.background='none'}>
+                  <button key={av} onClick={() => handleAvatarSelect(av)} style={{ fontSize: '1.5rem', background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 6, transition: 'background 0.15s' }} onMouseEnter={e => e.target.style.background='rgba(0,0,0,0.05)'} onMouseLeave={e => e.target.style.background='none'}>
                     {av}
                   </button>
                 ))}
@@ -244,7 +242,7 @@ export default function Home() {
               👤 Profile
             </button>
           </Link>
-          <button onClick={handleLogout} style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#f87171', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+          <button onClick={handleLogout} style={{ background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.15)', color: '#dc2626', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
             <LogOut size={14} /> Logout
           </button>
         </div>
@@ -262,12 +260,12 @@ export default function Home() {
         {/* Stats Bar */}
         <div className="stats-grid-container">
           {[
-            { label: 'MemeCoins', value: `🪙 ${user.meme_coins.toLocaleString()}`, color: '#ffd700' },
-            { label: 'ELO Rating', value: `👑 ${user.elo}`, color: '#fbbf24' },
-            { label: 'Record', value: `✅ ${user.wins}W – ❌ ${user.losses}L`, color: '#a5b4fc' },
+            { label: 'MemeCoins', value: `🪙 ${user.meme_coins.toLocaleString()}`, color: '#b45309', bg: 'rgba(217,119,6,0.08)', border: 'rgba(217,119,6,0.25)' },
+            { label: 'ELO Rating', value: `👑 ${user.elo}`, color: '#4f46e5', bg: 'rgba(79,70,229,0.08)', border: 'rgba(79,70,229,0.25)' },
+            { label: 'Record', value: `✅ ${user.wins}W – ❌ ${user.losses}L`, color: '#334155', bg: 'rgba(15,23,42,0.04)', border: 'rgba(15,23,42,0.08)' },
           ].map(stat => (
-            <div key={stat.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '10px 18px' }}>
-              <p style={{ fontSize: '0.72rem', opacity: 0.55, margin: '0 0 3px 0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{stat.label}</p>
+            <div key={stat.label} style={{ background: stat.bg, border: `1px solid ${stat.border}`, borderRadius: 10, padding: '10px 18px' }}>
+              <p style={{ fontSize: '0.72rem', opacity: 0.55, margin: '0 0 3px 0', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--foreground)' }}>{stat.label}</p>
               <p style={{ fontWeight: 800, fontSize: '1rem', color: stat.color, margin: 0 }}>{stat.value}</p>
             </div>
           ))}
@@ -317,7 +315,7 @@ export default function Home() {
       <div className="glass-panel" style={{ padding: '1.5rem', maxWidth: 680, width: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
           <h2 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Zap size={18} color="#fbbf24" /> Daily Quests
+            <Zap size={18} color="#b45309" /> Daily Quests
           </h2>
           <span style={{ fontSize: '0.8rem', background: completedCount === dailyQuests.length && dailyQuests.length > 0 ? 'rgba(16,185,129,0.1)' : 'rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.06)', borderRadius: 6, padding: '3px 10px', color: completedCount === dailyQuests.length && dailyQuests.length > 0 ? '#059669' : '#4f46e5', fontWeight: 700 }}>
             {completedCount}/{dailyQuests.length} done
@@ -333,18 +331,18 @@ export default function Home() {
             {dailyQuests.map(uq => {
               const pct = Math.min(100, (uq.progress / uq.quest.target) * 100);
               return (
-                <div key={uq.id} style={{ background: uq.completed ? 'rgba(52,211,153,0.07)' : 'rgba(255,255,255,0.03)', border: `1px solid ${uq.completed ? 'rgba(52,211,153,0.25)' : 'rgba(255,255,255,0.07)'}`, borderRadius: 10, padding: '10px 14px' }}>
+                <div key={uq.id} style={{ background: uq.completed ? 'rgba(16,185,129,0.08)' : 'rgba(0,0,0,0.02)', border: `1px solid ${uq.completed ? 'rgba(16,185,129,0.2)' : 'rgba(0,0,0,0.06)'}`, borderRadius: 10, padding: '10px 14px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      {uq.completed ? <CheckCircle size={16} color="#34d399" /> : <Clock size={16} color="#818cf8" />}
-                      <span style={{ fontWeight: 700, fontSize: '0.9rem', color: uq.completed ? '#34d399' : '#e0e7ff' }}>{uq.quest.title}</span>
+                      {uq.completed ? <CheckCircle size={16} color="#059669" /> : <Clock size={16} color="#4f46e5" />}
+                      <span style={{ fontWeight: 700, fontSize: '0.9rem', color: uq.completed ? '#059669' : 'var(--foreground)' }}>{uq.quest.title}</span>
                     </div>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#fbbf24' }}>+{uq.quest.reward} 🪙</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#b45309' }}>+{uq.quest.reward} 🪙</span>
                   </div>
                   <p style={{ margin: '0 0 6px 26px', fontSize: '0.78rem', opacity: 0.6 }}>{uq.quest.description}</p>
                   {/* Progress bar */}
-                  <div style={{ height: 5, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden', marginLeft: 26 }}>
-                    <div style={{ height: '100%', width: `${pct}%`, background: uq.completed ? 'linear-gradient(90deg,#34d399,#10b981)' : 'linear-gradient(90deg,#6366f1,#a855f7)', borderRadius: 99, transition: 'width 0.5s ease' }} />
+                  <div style={{ height: 5, background: 'rgba(0,0,0,0.06)', borderRadius: 99, overflow: 'hidden', marginLeft: 26 }}>
+                    <div style={{ height: '100%', width: `${pct}%`, background: uq.completed ? 'linear-gradient(90deg,#059669,#10b981)' : 'linear-gradient(90deg,#4f46e5,#7c3aed)', borderRadius: 99, transition: 'width 0.5s ease' }} />
                   </div>
                   <p style={{ margin: '4px 0 0 26px', fontSize: '0.72rem', opacity: 0.5 }}>{uq.progress}/{uq.quest.target}</p>
                 </div>
@@ -355,8 +353,8 @@ export default function Home() {
       </div>
 
       {/* Active packs footer */}
-      <p style={{ fontSize: '0.78rem', opacity: 0.4, textAlign: 'center' }}>
-        Skin: <b style={{ color: '#a855f7' }}>{user.active_skin_pack}</b> · Audio: <b style={{ color: '#c084fc' }}>{user.active_audio_pack}</b>
+      <p style={{ fontSize: '0.78rem', opacity: 0.5, textAlign: 'center' }}>
+        Skin: <b style={{ color: '#7c3aed' }}>{user.active_skin_pack}</b> · Audio: <b style={{ color: '#7c3aed' }}>{user.active_audio_pack}</b>
       </p>
     </main>
   );
