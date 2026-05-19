@@ -281,13 +281,13 @@ export default function Home() {
             </button>
           </Link>
           <Link href="/battlepass" style={{ width: '100%' }}>
-            <button className="btn-secondary" style={{ width: '100%', fontSize: '1.05rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '12px', background: 'rgba(168,85,247,0.1)', border: '1px solid rgba(168,85,247,0.35)', color: '#c084fc', fontWeight: 'bold' }}>
+            <button className="btn-secondary" style={{ width: '100%', fontSize: '1.05rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '12px', background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.25)', color: '#7c3aed', fontWeight: 'bold' }}>
               ⚡ Season 1: Aura Pass
             </button>
           </Link>
           <div className="menu-action-row">
             <Link href="/puzzles" style={{ flex: 1 }}>
-              <button className="btn-secondary" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.3)', color: '#fbbf24' }}>
+              <button className="btn-secondary" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'rgba(217,119,6,0.08)', border: '1px solid rgba(217,119,6,0.25)', color: '#b45309' }}>
                 🧠 Puzzles
               </button>
             </Link>
@@ -305,7 +305,7 @@ export default function Home() {
 
           {user.username.toLowerCase() === 'admin' && (
             <Link href="/admin" style={{ width: '100%' }}>
-              <button style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '10px', borderRadius: '10px', background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.35)', color: '#f87171', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 700 }}>
+              <button style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '10px', borderRadius: '10px', background: 'rgba(220,38,38,0.08)', border: '1px solid rgba(220,38,38,0.25)', color: '#dc2626', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 700 }}>
                 <Shield size={18} /> Admin Panel
               </button>
             </Link>
@@ -319,7 +319,7 @@ export default function Home() {
           <h2 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Zap size={18} color="#fbbf24" /> Daily Quests
           </h2>
-          <span style={{ fontSize: '0.8rem', background: completedCount === dailyQuests.length && dailyQuests.length > 0 ? 'rgba(52,211,153,0.2)' : 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, padding: '3px 10px', color: completedCount === dailyQuests.length && dailyQuests.length > 0 ? '#34d399' : '#a5b4fc', fontWeight: 700 }}>
+          <span style={{ fontSize: '0.8rem', background: completedCount === dailyQuests.length && dailyQuests.length > 0 ? 'rgba(16,185,129,0.1)' : 'rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.06)', borderRadius: 6, padding: '3px 10px', color: completedCount === dailyQuests.length && dailyQuests.length > 0 ? '#059669' : '#4f46e5', fontWeight: 700 }}>
             {completedCount}/{dailyQuests.length} done
           </span>
         </div>

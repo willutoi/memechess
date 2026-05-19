@@ -38,6 +38,7 @@ export default function PuzzlesPage() {
   const [hintShown, setHintShown] = useState(false);
   const [feedback, setFeedback] = useState(null); // { correct: boolean, message: string }
   const [loading, setLoading] = useState(true);
+  const [rewardPopup, setRewardPopup] = useState(null);
 
   const soundsRef = useRef({});
 
@@ -171,6 +172,18 @@ export default function PuzzlesPage() {
               ? 'Correct! You already solved this puzzle before.' 
               : `Correct! Gained +${data.coinsGained} MemeCoins & +${data.eloGained} ELO 🗿`
           });
+          
+          setRewardPopup({
+            title: 'Puzzle Solved! 🧩',
+            message: data.alreadySolved 
+              ? 'You already solved this puzzle previously.' 
+              : 'Rewards successfully claimed:',
+            rewards: data.alreadySolved ? [] : [
+              `+${data.coinsGained} MemeCoins`,
+              `+${data.eloGained} ELO`
+            ]
+          });
+
           // Update user state locally
           if (!data.alreadySolved) {
             setUser(prev => ({
@@ -320,10 +333,10 @@ export default function PuzzlesPage() {
           <Sparkles size={22} color="#fbbf24" /> Brainrot Puzzles
         </h2>
         <div style={{ display: 'flex', gap: '10px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(255,215,0,0.1)', border: '1px solid rgba(255,215,0,0.3)', padding: '6px 12px', borderRadius: '18px', color: '#ffd700', fontWeight: 'bold', fontSize: '0.9rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(217,119,6,0.08)', border: '1px solid rgba(217,119,6,0.25)', padding: '6px 12px', borderRadius: '18px', color: '#b45309', fontWeight: 'bold', fontSize: '0.9rem' }}>
             🪙 {user.meme_coins}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.3)', padding: '6px 12px', borderRadius: '18px', color: '#a5b4fc', fontWeight: 'bold', fontSize: '0.9rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(79,70,229,0.08)', border: '1px solid rgba(79,70,229,0.25)', padding: '6px 12px', borderRadius: '18px', color: '#4f46e5', fontWeight: 'bold', fontSize: '0.9rem' }}>
             👑 {user.elo} ELO
           </div>
         </div>
@@ -343,18 +356,19 @@ export default function PuzzlesPage() {
                   onClick={() => selectPuzzle(p)}
                   style={{
                     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                    padding: '12px 16px', borderRadius: 12, border: isSelected ? '1px solid #fbbf24' : '1px solid rgba(255,255,255,0.06)',
-                    background: isSelected ? 'rgba(251,191,36,0.1)' : 'rgba(255,255,255,0.02)',
-                    color: '#fff', cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s'
+                    padding: '12px 16px', borderRadius: 12, 
+                    border: isSelected ? '1px solid rgba(217,119,6,0.25)' : '1px solid rgba(0,0,0,0.06)',
+                    background: isSelected ? 'rgba(217,119,6,0.08)' : 'rgba(0,0,0,0.02)',
+                    color: 'var(--foreground)', cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s'
                   }}
                 >
                   <div>
                     <p style={{ fontWeight: 800, margin: 0, fontSize: '0.9rem' }}>{p.title}</p>
                     <p style={{ fontSize: '0.72rem', opacity: 0.6, margin: '2px 0 0 0', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                      <Award size={12} color="#ffd700" /> +{p.rewardCoins} MC · +{p.rewardElo} ELO
+                      <Award size={12} color="#b45309" /> +{p.rewardCoins} MC · +{p.rewardElo} ELO
                     </p>
                   </div>
-                  {p.solved && <CheckCircle2 size={20} color="#34d399" />}
+                  {p.solved && <CheckCircle2 size={20} color="#059669" />}
                 </button>
               );
             })}
@@ -371,13 +385,13 @@ export default function PuzzlesPage() {
               </div>
 
               {/* Side notice / Turn indicator */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.04)', padding: '8px 12px', borderRadius: 8, fontSize: '0.82rem' }}>
-                <span>Turn: <b style={{ color: selectedPuzzle.turn === 'w' ? '#fff' : '#818cf8' }}>{selectedPuzzle.turn === 'w' ? 'White' : 'Black'}</b></span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.06)', padding: '8px 12px', borderRadius: 8, fontSize: '0.82rem' }}>
+                <span>Turn: <b style={{ color: selectedPuzzle.turn === 'w' ? 'var(--foreground)' : '#4f46e5' }}>{selectedPuzzle.turn === 'w' ? 'White' : 'Black'}</b></span>
                 <button
                   onClick={() => setHintShown(true)}
                   style={{
                     display: 'flex', alignItems: 'center', gap: '0.3rem',
-                    background: 'none', border: 'none', color: '#fbbf24',
+                    background: 'none', border: 'none', color: '#b45309',
                     cursor: 'pointer', fontWeight: 'bold', fontSize: '0.82rem',
                     textDecoration: 'underline'
                   }}
@@ -387,7 +401,7 @@ export default function PuzzlesPage() {
               </div>
 
               {hintShown && (
-                <div style={{ background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.3)', borderRadius: 8, padding: '10px', fontSize: '0.8rem', color: '#fbbf24' }}>
+                <div style={{ background: 'rgba(217,119,6,0.08)', border: '1px solid rgba(217,119,6,0.2)', borderRadius: 8, padding: '10px', fontSize: '0.8rem', color: '#b45309' }}>
                   💡 Hint: {selectedPuzzle.hint}
                 </div>
               )}
@@ -396,8 +410,9 @@ export default function PuzzlesPage() {
               <div style={{ 
                 borderRadius: 12, 
                 overflow: 'hidden', 
-                border: '3px solid rgba(99,102,241,0.35)',
-                boxShadow: '0 8px 30px rgba(0,0,0,0.6)',
+                border: '1px solid var(--glass-border)',
+                boxShadow: 'var(--glass-shadow)',
+                background: 'var(--glass-bg)',
                 width: '100%',
                 maxWidth: '440px',
                 margin: '0 auto'
@@ -411,20 +426,97 @@ export default function PuzzlesPage() {
               {feedback && (
                 <div style={{
                   display: 'flex', alignItems: 'center', gap: '0.5rem',
-                  background: feedback.correct ? 'rgba(52,211,153,0.1)' : 'rgba(239,68,68,0.1)',
-                  border: `1px solid ${feedback.correct ? 'rgba(52,211,153,0.3)' : 'rgba(239,68,68,0.3)'}`,
+                  background: feedback.correct ? 'rgba(16,185,129,0.08)' : 'rgba(220,38,38,0.08)',
+                  border: `1px solid ${feedback.correct ? 'rgba(16,185,129,0.2)' : 'rgba(220,38,38,0.2)'}`,
                   borderRadius: 10, padding: '12px', fontSize: '0.85rem',
-                  color: feedback.correct ? '#34d399' : '#f87171',
+                  color: feedback.correct ? '#059669' : '#dc2626',
                   fontWeight: 700, animation: 'pulse 1.5s infinite'
                 }}>
                   {feedback.correct ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
                   <span>{feedback.message}</span>
                 </div>
               )}
+
+              {/* Replay/Reset Action Button */}
+              {(selectedPuzzle.solved || (feedback && feedback.correct)) && (
+                <button
+                  onClick={() => {
+                    const chess = new Chess(selectedPuzzle.fen);
+                    setGameState(chess);
+                    setBoardFen(chess.fen());
+                    setSelectedSquare('');
+                    setOptionSquares({});
+                    setFeedback(null);
+                  }}
+                  className="btn-secondary"
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+                    padding: '10px 16px', borderRadius: 10, fontSize: '0.85rem', fontWeight: 'bold'
+                  }}
+                >
+                  🔄 Reset & Replay Puzzle
+                </button>
+              )}
             </div>
           )}
         </div>
       </div>
+
+      {/* Center Modal reward popup */}
+      {rewardPopup && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+          background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)',
+          zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          <div style={{
+            background: 'var(--glass-bg)',
+            backdropFilter: 'blur(16px)',
+            border: '1px solid var(--glass-border)',
+            borderRadius: 20,
+            padding: '2.5rem',
+            textAlign: 'center',
+            boxShadow: 'var(--glass-shadow)',
+            width: '90%',
+            maxWidth: 380,
+            animation: 'scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
+          }}>
+            <div style={{ fontSize: '3.5rem', marginBottom: '1rem', animation: 'bounce 2s infinite' }}>🎉</div>
+            <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.4rem', fontWeight: 800, color: 'var(--foreground)' }}>{rewardPopup.title}</h3>
+            <p style={{ margin: '0 0 1.5rem', fontSize: '0.9rem', opacity: 0.7 }}>{rewardPopup.message}</p>
+            {rewardPopup.rewards && rewardPopup.rewards.length > 0 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2rem' }}>
+                {rewardPopup.rewards.map((msg, i) => {
+                  const isElo = msg.includes('ELO');
+                  const icon = isElo ? '👑' : '🪙';
+                  const color = isElo ? '#b45309' : '#059669';
+                  const bg = isElo ? 'rgba(217,119,6,0.08)' : 'rgba(16,185,129,0.08)';
+                  return (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '12px', borderRadius: 12, background: bg, border: `1px solid ${isElo ? 'rgba(217,119,6,0.15)' : 'rgba(16,185,129,0.15)'}`, color: color, fontWeight: 800, fontSize: '1.1rem' }}>
+                      <span>{icon}</span>
+                      <span>{msg.replace('🪙', '').replace('MemeCoins', '').trim()}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            <button className="btn-primary" onClick={() => setRewardPopup(null)} style={{ width: '100%', padding: '12px 24px', fontSize: '1rem', borderRadius: 10 }}>
+              Awesome!
+            </button>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes scaleUp {
+          from { transform: scale(0.9); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+      `}</style>
     </main>
   );
 }

@@ -580,7 +580,7 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
           <h2 className="text-gradient" style={{ fontSize:'2rem', fontWeight:800, marginBottom:'1rem' }}>MemeChess Arena</h2>
           
           <div style={{ marginBottom: '1.5rem' }}>
-            <p style={{ color:'#818cf8', marginBottom:'0.5rem', fontSize:'0.9rem', fontWeight:600 }}>⏱️ TIME CONTROL</p>
+            <p style={{ color:'#4f46e5', marginBottom:'0.5rem', fontSize:'0.9rem', fontWeight:600 }}>⏱️ TIME CONTROL</p>
             <div style={{ display:'flex', gap:'0.5rem', justifyContent:'center', flexWrap:'wrap' }}>
               {TIME_CONTROLS.map(tc => (
                 <button
@@ -588,9 +588,9 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
                   onClick={() => setTimeControl(tc)}
                   style={{
                     padding: '8px 14px', borderRadius: 8,
-                    border: '1px solid rgba(251,191,36,0.4)',
-                    background: timeControl.name === tc.name ? 'rgba(251,191,36,0.3)' : 'rgba(251,191,36,0.06)',
-                    color: timeControl.name === tc.name ? '#fbbf24' : '#a5b4fc',
+                    border: timeControl.name === tc.name ? '1px solid rgba(217,119,6,0.4)' : '1px solid rgba(0,0,0,0.08)',
+                    background: timeControl.name === tc.name ? 'rgba(217,119,6,0.12)' : 'rgba(0,0,0,0.02)',
+                    color: timeControl.name === tc.name ? '#b45309' : 'var(--foreground)',
                     cursor: 'pointer', fontWeight: 700, transition: 'all 0.2s', fontSize: '0.85rem'
                   }}
                 >
@@ -601,7 +601,7 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
             </div>
           </div>
           <div style={{ marginBottom: '2rem' }}>
-            <p style={{ color:'#818cf8', marginBottom:'0.5rem', fontSize:'0.9rem', fontWeight:600 }}>🤖 AI DIFFICULTY</p>
+            <p style={{ color:'#4f46e5', marginBottom:'0.5rem', fontSize:'0.9rem', fontWeight:600 }}>🤖 AI DIFFICULTY</p>
             <div style={{ display:'flex', gap:'0.5rem', justifyContent:'center' }}>
               {['beginner', 'intermediate', 'hard'].map(level => (
                 <button
@@ -609,9 +609,9 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
                   onClick={() => setDifficulty(level)}
                   style={{
                     padding: '8px 16px', borderRadius: 8,
-                    border: '1px solid rgba(99,102,241,0.4)',
-                    background: difficulty === level ? '#6366f1' : 'rgba(99,102,241,0.08)',
-                    color: difficulty === level ? '#fff' : '#a5b4fc',
+                    border: difficulty === level ? '1px solid #4f46e5' : '1px solid rgba(0,0,0,0.08)',
+                    background: difficulty === level ? '#4f46e5' : 'rgba(0,0,0,0.02)',
+                    color: difficulty === level ? '#fff' : 'var(--foreground)',
                     cursor: 'pointer', fontWeight: 700, textTransform: 'capitalize', transition: 'all 0.2s'
                   }}
                 >
@@ -621,13 +621,13 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
             </div>
           </div>
 
-          <p style={{ color:'#818cf8', marginBottom:'2rem', fontSize:'0.95rem' }}>Pick your side and start accumulating ELO & Coins!</p>
+          <p style={{ color:'var(--foreground)', opacity: 0.8, marginBottom:'2rem', fontSize:'0.95rem' }}>Pick your side and start accumulating ELO & Coins fr fr!</p>
           
           <div style={{ display:'flex', gap:'1.5rem', justifyContent:'center' }}>
-            <button onClick={() => startGame('w')} style={{ padding:'1rem 2rem', borderRadius:12, border:'2px solid rgba(255,255,255,0.3)', background:'rgba(255,255,255,0.9)', color:'#1e1b4b', fontWeight:800, fontSize:'1.1rem', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:'0.4rem', transition:'all 0.2s' }} onMouseEnter={e=>e.target.style.transform='scale(1.05)'} onMouseLeave={e=>e.target.style.transform='scale(1)'}>
+            <button onClick={() => startGame('w')} style={{ padding:'1rem 2rem', borderRadius:12, border:'2px solid rgba(0,0,0,0.1)', background:'#ffffff', color:'#18181b', fontWeight:800, fontSize:'1.1rem', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:'0.4rem', transition:'all 0.2s', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }} onMouseEnter={e=>e.target.style.transform='scale(1.05)'} onMouseLeave={e=>e.target.style.transform='scale(1)'}>
               <span style={{ fontSize:'2rem' }}>♙</span> Play White
             </button>
-            <button onClick={() => startGame('b')} style={{ padding:'1rem 2rem', borderRadius:12, border:'2px solid rgba(99,102,241,0.5)', background:'rgba(30,27,81,0.9)', color:'#e0e7ff', fontWeight:800, fontSize:'1.1rem', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:'0.4rem', transition:'all 0.2s' }} onMouseEnter={e=>e.target.style.transform='scale(1.05)'} onMouseLeave={e=>e.target.style.transform='scale(1)'}>
+            <button onClick={() => startGame('b')} style={{ padding:'1rem 2rem', borderRadius:12, border:'2px solid rgba(0,0,0,0.15)', background:'#18181b', color:'#ffffff', fontWeight:800, fontSize:'1.1rem', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:'0.4rem', transition:'all 0.2s', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }} onMouseEnter={e=>e.target.style.transform='scale(1.05)'} onMouseLeave={e=>e.target.style.transform='scale(1)'}>
               <span style={{ fontSize:'2rem' }}>♟</span> Play Black
             </button>
           </div>
@@ -646,11 +646,12 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
         {/* Left Column: Board and Clocks */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {/* Board Status / Header */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '8px 12px', borderRadius: 8 }}>
-            <span style={{ fontSize: '0.85rem', color: '#a5b4fc', fontWeight: 'bold' }}>
-              Opponent (AI): <b style={{ color: game.turn() !== playerColor ? '#fbbf24' : '#fff' }}>{formatTime(aiTime)}</b>
+          {/* Board Status / Header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.06)', padding: '8px 12px', borderRadius: 8 }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--foreground)', fontWeight: 'bold' }}>
+              Opponent (AI): <b style={{ color: game.turn() !== playerColor ? '#b45309' : 'var(--foreground)' }}>{formatTime(aiTime)}</b>
             </span>
-            <span style={{ fontSize: '0.85rem', textTransform: 'capitalize', color: '#818cf8', fontWeight: 'bold' }}>
+            <span style={{ fontSize: '0.85rem', textTransform: 'capitalize', color: '#4f46e5', fontWeight: 'bold' }}>
               Difficulty: {difficulty}
             </span>
           </div>
@@ -667,9 +668,9 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
           <div style={{ 
             borderRadius: 16, 
             overflow: 'hidden', 
-            boxShadow: '0 12px 40px rgba(0,0,0,0.6), 0 0 50px rgba(99,102,241,0.25)', 
-            border: '3px solid rgba(99,102,241,0.35)',
-            background: 'rgba(9, 9, 11, 0.9)',
+            boxShadow: 'var(--glass-shadow)', 
+            border: '1px solid var(--glass-border)',
+            background: 'var(--glass-bg)',
             width: '100%',
             maxWidth: '520px',
             margin: '0 auto'
@@ -688,15 +689,15 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
           </div>
 
           {/* Footer info & Clocks */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem', fontWeight: 600, background: 'rgba(255,255,255,0.03)', padding: '8px 12px', borderRadius: 8 }}>
-            <span>Your Time: <b style={{ color: game.turn() === playerColor ? '#fbbf24' : '#fff' }}>{formatTime(playerTime)}</b></span>
-            <span style={{ color: '#818cf8' }}>Skin: {activePack}</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem', fontWeight: 600, background: 'rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.06)', padding: '8px 12px', borderRadius: 8 }}>
+            <span>Your Time: <b style={{ color: game.turn() === playerColor ? '#b45309' : 'var(--foreground)' }}>{formatTime(playerTime)}</b></span>
+            <span style={{ color: '#4f46e5' }}>Skin: {activePack}</span>
           </div>
 
           {gameStatus && (
-            <div style={{ background: 'rgba(168,85,247,0.25)', border: '1px solid rgba(168,85,247,0.4)', borderRadius: 8, padding: '10px 16px', textAlign: 'center', fontWeight: 700, color: '#e9d5ff' }}>
+            <div style={{ background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.25)', borderRadius: 8, padding: '10px 16px', textAlign: 'center', fontWeight: 700, color: '#7c3aed' }}>
               {gameStatus}
-              <button onClick={() => setPlayerColor(null)} style={{ marginLeft: 12, background: 'rgba(99,102,241,0.3)', border: '1px solid #6366f1', color: '#a5b4fc', padding: '4px 12px', borderRadius: 6, cursor: 'pointer', fontSize: '0.82rem' }}>
+              <button onClick={() => setPlayerColor(null)} style={{ marginLeft: 12, background: 'rgba(79,70,229,0.08)', border: '1px solid rgba(79,70,229,0.25)', color: '#4f46e5', padding: '4px 12px', borderRadius: 6, cursor: 'pointer', fontSize: '0.82rem', fontWeight: 'bold' }}>
                 Reset Match
               </button>
             </div>
@@ -706,20 +707,20 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
         {/* Right Column: AI speech bubble and Move Log */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {/* AI Speech Bubble */}
-          <div style={{ background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 12, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ background: 'rgba(79,70,229,0.06)', border: '1px solid rgba(79,70,229,0.15)', borderRadius: 12, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ fontSize: '1.6rem' }}>🤖</span>
-            <p style={{ margin: 0, fontSize: '0.85rem', fontStyle: 'italic', color: '#c7d2fe' }}>{aiPhrase}</p>
+            <p style={{ margin: 0, fontSize: '0.85rem', fontStyle: 'italic', color: 'var(--foreground)', opacity: 0.85 }}>{aiPhrase}</p>
           </div>
 
           {/* Side Panel: Move Log */}
           <div className="glass-panel" style={{ padding: 15, display: 'flex', flexDirection: 'column', flex: 1, minHeight: 220, maxHeight: 360, overflowY: 'auto', boxSizing: 'border-box' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: 8, marginBottom: 10 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--glass-border)', paddingBottom: 8, marginBottom: 10 }}>
               <h3 style={{ fontSize: '1rem', margin: 0 }}>📋 Move Log</h3>
-              <button onClick={() => setPlayerColor(null)} style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.35)', color: '#f87171', padding: '4px 12px', borderRadius: 8, cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700 }}>
+              <button onClick={() => setPlayerColor(null)} style={{ background: 'rgba(220,38,38,0.08)', border: '1px solid rgba(220,38,38,0.25)', color: '#dc2626', padding: '4px 12px', borderRadius: 8, cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700 }}>
                 🏳️ Resign
               </button>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '36px 1fr 1fr', gap: '6px 8px', fontSize: '0.85rem', color: '#c7d2fe', overflowY: 'auto' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '36px 1fr 1fr', gap: '6px 8px', fontSize: '0.85rem', color: 'var(--foreground)', overflowY: 'auto' }}>
               {Array.from({ length: Math.ceil(moveHistory.length / 2) }).map((_, i) => (
                 <div key={i} style={{ display: 'contents' }}>
                   <span style={{ opacity: 0.5 }}>{i + 1}.</span>
@@ -744,12 +745,44 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
 
       {/* Reward Popup after game ends */}
       {rewardPopup && (
-        <div style={{ position: 'fixed', bottom: 30, left: '50%', transform: 'translateX(-50%)', background: 'rgba(15,15,20,0.97)', border: '1px solid rgba(99,102,241,0.5)', borderRadius: 14, padding: '1.25rem 2rem', textAlign: 'center', zIndex: 998, boxShadow: '0 12px 40px rgba(0,0,0,0.8)', animation: 'fadeSlideIn 0.4s ease', minWidth: 240 }}>
-          <div style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>🎉</div>
-          <h3 style={{ margin: '0 0 0.5rem', fontSize: '1rem', color: '#a5b4fc' }}>Game Results</h3>
-          {rewardPopup.map((msg, i) => (
-            <p key={i} style={{ margin: '3px 0', fontWeight: 800, color: msg.includes('ELO') ? '#fbbf24' : '#34d399', fontSize: '1rem' }}>{msg}</p>
-          ))}
+        <div style={{
+          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+          background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)',
+          zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          <div style={{
+            background: 'var(--glass-bg)',
+            backdropFilter: 'blur(16px)',
+            border: '1px solid var(--glass-border)',
+            borderRadius: 20,
+            padding: '2.5rem',
+            textAlign: 'center',
+            boxShadow: 'var(--glass-shadow)',
+            width: '90%',
+            maxWidth: 380,
+            animation: 'scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
+          }}>
+            <div style={{ fontSize: '3.5rem', marginBottom: '1rem', animation: 'bounce 2s infinite' }}>🎉</div>
+            <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.4rem', fontWeight: 800, color: 'var(--foreground)' }}>Match Completed</h3>
+            <p style={{ margin: '0 0 1.5rem', fontSize: '0.9rem', opacity: 0.7 }}>Here are your rewards for finishing the battle:</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2rem' }}>
+              {rewardPopup.map((msg, i) => {
+                const isElo = msg.includes('ELO');
+                const icon = isElo ? '👑' : '🪙';
+                const color = isElo ? '#b45309' : '#059669';
+                const bg = isElo ? 'rgba(217,119,6,0.08)' : 'rgba(16,185,129,0.08)';
+                return (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '12px', borderRadius: 12, background: bg, border: `1px solid ${isElo ? 'rgba(217,119,6,0.15)' : 'rgba(16,185,129,0.15)'}`, color: color, fontWeight: 800, fontSize: '1.1rem' }}>
+                    <span>{icon}</span>
+                    <span>{msg.replace('🪙', '').replace('MemeCoins', '').trim()}</span>
+                  </div>
+                );
+              })}
+            </div>
+            <button className="btn-primary" onClick={() => setRewardPopup(null)} style={{ width: '100%', padding: '12px 24px', fontSize: '1rem', borderRadius: 10 }}>
+              Awesome!
+            </button>
+          </div>
         </div>
       )}
 
@@ -757,6 +790,14 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
         @keyframes fadeSlideIn {
           from { opacity: 0; transform: translateY(-10px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scaleUp {
+          from { transform: scale(0.9); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
         }
       `}</style>
     </div>

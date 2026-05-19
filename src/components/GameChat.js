@@ -122,19 +122,20 @@ export default function GameChat({ username }) {
       {open && (
         <div style={{
           position: 'absolute', top: '120%', right: 0,
-          width: 300, background: '#0f0f13',
-          border: '1px solid rgba(99,102,241,0.3)',
+          width: 300, background: 'var(--glass-bg)',
+          backdropFilter: 'blur(12px)',
+          border: '1px solid var(--glass-border)',
           borderRadius: 14, overflow: 'hidden',
-          boxShadow: '0 12px 40px rgba(0,0,0,0.7)',
+          boxShadow: 'var(--glass-shadow)',
           zIndex: 200,
           animation: 'fadeSlideUp 0.2s ease',
         }}>
           <style>{`@keyframes fadeSlideUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }`}</style>
 
           {/* Header */}
-          <div style={{ background: 'rgba(99,102,241,0.15)', padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontWeight: 800, fontSize: '0.9rem', color: '#a5b4fc' }}>💬 In-Game Chat</span>
-            <button onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', color: '#818cf8', cursor: 'pointer', fontSize: '1.1rem' }}>✕</button>
+          <div style={{ background: 'rgba(99,102,241,0.08)', padding: '10px 14px', borderBottom: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontWeight: 800, fontSize: '0.9rem', color: '#4f46e5' }}>💬 In-Game Chat</span>
+            <button onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', color: '#4f46e5', cursor: 'pointer', fontSize: '1.1rem' }}>✕</button>
           </div>
 
           {/* Messages */}
@@ -143,14 +144,14 @@ export default function GameChat({ username }) {
               <div key={msg.id} style={{ display: 'flex', flexDirection: msg.isAI ? 'row' : 'row-reverse', gap: '0.5rem', alignItems: 'flex-end' }}>
                 <div style={{
                   maxWidth: '80%',
-                  background: msg.isAI ? 'rgba(99,102,241,0.15)' : 'rgba(168,85,247,0.2)',
-                  border: `1px solid ${msg.isAI ? 'rgba(99,102,241,0.3)' : 'rgba(168,85,247,0.3)'}`,
+                  background: msg.isAI ? 'rgba(99,102,241,0.08)' : 'rgba(168,85,247,0.08)',
+                  border: `1px solid ${msg.isAI ? 'rgba(99,102,241,0.2)' : 'rgba(168,85,247,0.2)'}`,
                   borderRadius: msg.isAI ? '12px 12px 12px 2px' : '12px 12px 2px 12px',
                   padding: '6px 10px',
                 }}>
-                  <p style={{ margin: 0, fontSize: '0.78rem', color: msg.isAI ? '#a5b4fc' : '#d8b4fe', fontWeight: 600 }}>{msg.sender}</p>
-                  <p style={{ margin: 0, fontSize: '0.85rem', color: '#e0e7ff' }}>{msg.text}</p>
-                  <p style={{ margin: '2px 0 0', fontSize: '0.65rem', opacity: 0.4 }}>{formatTime(msg.ts)}</p>
+                  <p style={{ margin: 0, fontSize: '0.78rem', color: msg.isAI ? '#4f46e5' : '#7c3aed', fontWeight: 600 }}>{msg.sender}</p>
+                  <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--foreground)' }}>{msg.text}</p>
+                  <p style={{ margin: '2px 0 0', fontSize: '0.65rem', opacity: 0.5 }}>{formatTime(msg.ts)}</p>
                 </div>
               </div>
             ))}
@@ -158,20 +159,20 @@ export default function GameChat({ username }) {
           </div>
 
           {/* Meme phrase buttons */}
-          <div style={{ padding: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+          <div style={{ padding: '0.5rem', borderTop: '1px solid var(--glass-border)', display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
             {MEME_PHRASES.map(p => (
               <button
                 key={p.text}
                 onClick={() => sendPhrase(p)}
                 style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'rgba(0,0,0,0.03)',
+                  border: '1px solid rgba(0,0,0,0.06)',
                   borderRadius: 6, padding: '4px 8px',
-                  color: '#c7d2fe', fontSize: '0.75rem', fontWeight: 600,
+                  color: 'var(--foreground)', fontSize: '0.75rem', fontWeight: 600,
                   cursor: 'pointer', transition: 'all 0.15s',
                 }}
-                onMouseEnter={e => e.target.style.background = 'rgba(99,102,241,0.2)'}
-                onMouseLeave={e => e.target.style.background = 'rgba(255,255,255,0.05)'}
+                onMouseEnter={e => e.target.style.background = 'rgba(99,102,241,0.08)'}
+                onMouseLeave={e => e.target.style.background = 'rgba(0,0,0,0.03)'}
               >
                 {p.emoji} {p.text}
               </button>
