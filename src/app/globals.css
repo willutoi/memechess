@@ -105,3 +105,60 @@ a {
   }
 }
 
+.menu-action-row {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}
+
+@media (max-width: 580px) {
+  .menu-action-row {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+}
+
+.audio-pack-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+@media (max-width: 580px) {
+  .audio-pack-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .audio-pack-row button {
+    width: 100% !important;
+  }
+}
+.stats-grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+@media (max-width: 520px) {
+  .stats-grid-container {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+.puzzles-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .puzzles-grid {
+    grid-template-columns: 1fr;
+  }
+}

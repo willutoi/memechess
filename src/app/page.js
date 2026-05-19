@@ -260,13 +260,13 @@ export default function Home() {
         </p>
 
         {/* Stats Bar */}
-        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '2rem', flexWrap: 'wrap' }}>
+        <div className="stats-grid-container">
           {[
             { label: 'MemeCoins', value: `🪙 ${user.meme_coins.toLocaleString()}`, color: '#ffd700' },
             { label: 'ELO Rating', value: `👑 ${user.elo}`, color: '#fbbf24' },
             { label: 'Record', value: `✅ ${user.wins}W – ❌ ${user.losses}L`, color: '#a5b4fc' },
           ].map(stat => (
-            <div key={stat.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '10px 18px', minWidth: 140 }}>
+            <div key={stat.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '10px 18px' }}>
               <p style={{ fontSize: '0.72rem', opacity: 0.55, margin: '0 0 3px 0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{stat.label}</p>
               <p style={{ fontWeight: 800, fontSize: '1rem', color: stat.color, margin: 0 }}>{stat.value}</p>
             </div>
@@ -285,7 +285,7 @@ export default function Home() {
               ⚡ Season 1: Aura Pass
             </button>
           </Link>
-          <div style={{ display: 'flex', gap: '1rem' }}>
+          <div className="menu-action-row">
             <Link href="/puzzles" style={{ flex: 1 }}>
               <button className="btn-secondary" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.3)', color: '#fbbf24' }}>
                 🧠 Puzzles

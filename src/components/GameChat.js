@@ -25,18 +25,6 @@ export default function GameChat({ username }) {
   const [unread, setUnread] = useState(0);
   const bottomRef = useRef(null);
 
-  // Simulate AI reactions to player messages
-  const AI_REACTIONS = [
-    "L + ratio 💀",
-    "ur actually bad lol",
-    "skill issue detected 🗿",
-    "that's rough buddy",
-    "nah you won't win",
-    "mid at best fr",
-    "keep coping 🤣",
-    "no shot 🎯",
-  ];
-
   useEffect(() => {
     if (open) {
       setUnread(0);
@@ -44,13 +32,59 @@ export default function GameChat({ username }) {
     }
   }, [open, messages]);
 
+  const getAIResponse = (playerText) => {
+    const lower = playerText.toLowerCase();
+    if (lower.includes('gg') || lower.includes('ez')) {
+      return [
+        "bro saying gg ez with that low elo? 💀",
+        "gg indeed, go next 🗿",
+        "who said it was ez? look at the timer",
+        "bro thinks he won already 😭"
+      ][Math.floor(Math.random() * 4)];
+    }
+    if (lower.includes('skill') || lower.includes('issue')) {
+      return [
+        "bold words for someone in checkmate range 💀",
+        "ratio + skill issue + L 🗿",
+        "your chess lines are mid fr fr",
+        "my depth-2 minimax says otherwise 🤖"
+      ][Math.floor(Math.random() * 4)];
+    }
+    if (lower.includes('nice') || lower.includes('move') || lower.includes('w move')) {
+      return [
+        "obviously a W move, I calculate all timelines 📈",
+        "respect, but my next move is pure dev aura",
+        "calculated 🗿",
+        "bro noticed my absolute genius 🍷"
+      ][Math.floor(Math.random() * 4)];
+    }
+    if (lower.includes('nah') || lower.includes('yikes') || lower.includes('l move')) {
+      return [
+        "major cope detected 🤣",
+        "ur cooked, accept it 👨‍🍳",
+        "pure brainrot behavior 💀",
+        "just resign, save your ELO"
+      ][Math.floor(Math.random() * 4)];
+    }
+    // Default fallback responses
+    return [
+      "pure skill issue 🗿",
+      "L + ratio 💀",
+      "your next move is already computed 🤖",
+      "no shot you win this",
+      "bro is coping so hard right now",
+      "are we playing chess or drafts? 😭",
+      "W aura on my side, L aura on yours 🍷"
+    ][Math.floor(Math.random() * 7)];
+  };
+
   const sendPhrase = (phrase) => {
     const newMsg = { id: Date.now(), sender: username || 'You', text: phrase.text, ts: Date.now(), isAI: false };
     setMessages(prev => [...prev, newMsg]);
 
     // AI reply after a short delay
     setTimeout(() => {
-      const reply = AI_REACTIONS[Math.floor(Math.random() * AI_REACTIONS.length)];
+      const reply = getAIResponse(phrase.text);
       const aiMsg = { id: Date.now() + 1, sender: '🤖 AI', text: reply, ts: Date.now(), isAI: true };
       setMessages(prev => [...prev, aiMsg]);
       if (!open) setUnread(u => u + 1);

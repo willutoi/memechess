@@ -194,15 +194,13 @@ export default function Shop() {
               return (
                 <div 
                   key={a.name} 
+                  className="audio-pack-row"
                   style={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'center', 
-                    padding: '1.2rem', 
                     background: 'rgba(255,255,255,0.02)',
                     border: `1px solid ${isEquipped ? 'rgba(168,85,247,0.4)' : 'rgba(255,255,255,0.06)'}`,
                     borderRadius: '12px',
-                    transition: 'all 0.2s'
+                    transition: 'all 0.2s',
+                    padding: '1.2rem'
                   }}
                 >
                   <div>

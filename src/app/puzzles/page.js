@@ -151,7 +151,7 @@ export default function PuzzlesPage() {
     if (!user || !selectedPuzzle) return;
 
     try {
-      const res = await fetch('/api/puzzles/solve', {
+      const res = await fetch('/api/puzzles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -330,7 +330,7 @@ export default function PuzzlesPage() {
       </div>
 
       {/* Main Content Layout */}
-      <div style={{ width: '100%', maxWidth: '1000px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem', alignItems: 'start' }}>
+      <div className="puzzles-grid" style={{ maxWidth: '1000px', alignItems: 'start' }}>
         {/* Left Side: Puzzle list */}
         <div className="glass-panel" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '550px', overflowY: 'auto' }}>
           <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>📂 Selection</h3>
