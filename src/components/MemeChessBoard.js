@@ -624,11 +624,10 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
           let pieceStyle = { width: '85%', height: '85%', objectFit: 'contain', pointerEvents: 'none', userSelect: 'none' };
           
           if (isImgSkin) {
-            if (isWhitePiece) {
-              pieceStyle.mixBlendMode = 'multiply';
+            if (!isWhitePiece) {
+              pieceStyle.filter = 'invert(1) hue-rotate(180deg) brightness(0.9) drop-shadow(2px 3px 0px rgba(0,0,0,0.4))';
             } else {
-              pieceStyle.mixBlendMode = 'screen';
-              pieceStyle.filter = 'invert(1) hue-rotate(180deg)';
+              pieceStyle.filter = 'drop-shadow(2px 3px 0px rgba(0,0,0,0.4))';
             }
           } else {
             pieceStyle.filter = 'drop-shadow(2px 3px 0px rgba(0,0,0,0.4))';
@@ -849,8 +848,7 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
                 <span key={idx} style={{ display: 'inline-block', width: 24, height: 24 }}>
                   <img src={src} alt="captured" style={{
                     width: '100%', height: '100%', objectFit: 'contain',
-                    filter: isImg ? 'invert(1) hue-rotate(180deg)' : 'none',
-                    mixBlendMode: isImg ? 'screen' : 'normal'
+                    filter: isImg ? 'invert(1) hue-rotate(180deg) brightness(0.9) drop-shadow(1px 1px 0px rgba(0,0,0,0.5))' : 'none'
                   }} />
                 </span>
               );
@@ -902,7 +900,7 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
                 <span key={idx} style={{ display: 'inline-block', width: 24, height: 24 }}>
                   <img src={src} alt="captured" style={{
                     width: '100%', height: '100%', objectFit: 'contain',
-                    mixBlendMode: isImg ? 'multiply' : 'normal'
+                    filter: isImg ? 'drop-shadow(1px 1px 0px rgba(0,0,0,0.5))' : 'none'
                   }} />
                 </span>
               );
