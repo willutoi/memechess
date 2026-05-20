@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 
 export default function Play() {
   const [activePack, setActivePack] = useState('classic');
-  const [activeAudioPack, setActiveAudioPack] = useState('default');
+  const [activeAudioPack, setActiveAudioPack] = useState('classic');
   const [username, setUsername] = useState('');
   const router = useRouter();
 

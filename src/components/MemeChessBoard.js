@@ -614,12 +614,19 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
           bgStyle = '#f59e0b';
         }
 
+        // Unicode fallback symbols
+        const UNICODE_PIECES = {
+          wP: '♙', wN: '♘', wB: '♗', wR: '♖', wQ: '♕', wK: '♔',
+          bP: '♟', bN: '♞', bB: '♝', bR: '♜', bQ: '♛', bK: '♚'
+        };
+
         let pieceDisplay = null;
         if (piece) {
           const key = `${piece.color}${piece.type.toUpperCase()}`;
           const isWhitePiece = piece.color === 'w';
-          const src = pieceImages[activePack] ? pieceImages[activePack][key] : pieceImages['classic'][key];
-          const isImgSkin = activePack !== 'classic';
+          const safePack = pieceImages[activePack] ? activePack : 'classic';
+          const src = pieceImages[safePack][key];
+          const isImgSkin = safePack !== 'classic';
           
           let pieceStyle = { width: '85%', height: '85%', objectFit: 'contain', pointerEvents: 'none', userSelect: 'none' };
           
@@ -635,7 +642,20 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
 
           pieceDisplay = (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
-              <img src={src} alt={key} style={pieceStyle} draggable={false} />
+              <img
+                src={src}
+                alt={key}
+                style={pieceStyle}
+                draggable={false}
+                onError={(e) => {
+                  // If image fails to load, show unicode piece as fallback
+                  e.target.style.display = 'none';
+                  const span = document.createElement('span');
+                  span.textContent = UNICODE_PIECES[key] || '?';
+                  span.style.cssText = 'font-size:clamp(1.5rem,8vw,2.4rem);line-height:1;user-select:none;filter:drop-shadow(2px 2px 0 rgba(0,0,0,0.5))';
+                  e.target.parentNode.appendChild(span);
+                }}
+              />
             </div>
           );
         }

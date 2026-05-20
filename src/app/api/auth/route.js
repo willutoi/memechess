@@ -33,7 +33,7 @@ export async function POST(req) {
           password_hash: hash,
           meme_coins: trimmedUser === 'admin' ? 999999999 : 500,
           active_skin_pack: 'classic',
-          active_audio_pack: 'default',
+          active_audio_pack: 'classic',
         }
       });
       // Seed daily quests for new user
