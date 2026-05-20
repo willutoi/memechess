@@ -10,6 +10,14 @@ const handle = app.getRequestHandler();
 app.prepare().then(() => {
   const server = createServer((req, res) => {
     const parsedUrl = parse(req.url, true);
+    
+    // Health check endpoint for keep-alive services (UptimeRobot etc.)
+    if (parsedUrl.pathname === '/ping') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ status: 'ok', timestamp: Date.now() }));
+      return;
+    }
+    
     handle(req, res, parsedUrl);
   });
 
