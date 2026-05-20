@@ -1,0 +1,21 @@
+{
+  "name": "MemeChess Arena",
+  "short_name": "MemeChess",
+  "description": "Play chess. Earn MemeCoins. Collect viral skins. Flex your ELO.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#111827",
+  "icons": [
+    {
+      "src": "/skin_sigma.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/skin_sigma.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

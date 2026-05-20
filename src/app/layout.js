@@ -12,9 +12,22 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport = {
+  themeColor: "#111827",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export const metadata = {
   title: "MemeChess | The Ultimate Brainrot Chess",
   description: "Play chess with viral meme skins, sounds, and earn MemeCoins.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "MemeChess",
+  },
 };
 
 export default function RootLayout({ children }) {

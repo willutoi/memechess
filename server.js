@@ -15,12 +15,29 @@ app.prepare().then(() => {
 
   const io = new Server(server);
 
+  let waitingPlayers = [];
+
   io.on('connection', (socket) => {
     console.log('A user connected:', socket.id);
 
-    socket.on('join_room', (roomId) => {
-      socket.join(roomId);
-      console.log(`User ${socket.id} joined room ${roomId}`);
+    socket.on('find_match', (username) => {
+      console.log(`User ${username} looking for a match`);
+      waitingPlayers.push({ id: socket.id, username, socket });
+
+      if (waitingPlayers.length >= 2) {
+        const p1 = waitingPlayers.shift();
+        const p2 = waitingPlayers.shift();
+        const roomId = `room_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+
+        p1.socket.join(roomId);
+        p2.socket.join(roomId);
+
+        // Assign colors
+        p1.socket.emit('match_found', { roomId, color: 'w', opponent: p2.username });
+        p2.socket.emit('match_found', { roomId, color: 'b', opponent: p1.username });
+
+        console.log(`Match created: ${p1.username} vs ${p2.username} in ${roomId}`);
+      }
     });
 
     socket.on('move', (data) => {
@@ -29,6 +46,7 @@ app.prepare().then(() => {
 
     socket.on('disconnect', () => {
       console.log('User disconnected:', socket.id);
+      waitingPlayers = waitingPlayers.filter(p => p.id !== socket.id);
     });
   });
 

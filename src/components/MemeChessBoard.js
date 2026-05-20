@@ -2,6 +2,7 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { Chess } from 'chess.js';
 import { Howl } from 'howler';
+import { io } from 'socket.io-client';
 
 // Incredibly pleasant and satisfying CORS-safe sounds
 const AUDIO_PACKS = {
@@ -13,34 +14,34 @@ const AUDIO_PACKS = {
     gameOver: 'https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg'
   },
   brainrot: {
-    // Energetic cartoon splats and tech pops
-    move: 'https://actions.google.com/sounds/v1/cartoon/cartoon_cowbell.ogg',
-    capture: 'https://actions.google.com/sounds/v1/cartoon/splat.ogg',
-    check: 'https://actions.google.com/sounds/v1/science_fiction/incoming_transmission.ogg',
-    gameOver: 'https://actions.google.com/sounds/v1/cartoon/slide_whistle_up.ogg'
+    // Energetic meme sounds
+    move: 'https://www.myinstants.com/media/sounds/vine-boom.mp3',
+    capture: 'https://www.myinstants.com/media/sounds/movie_1.mp3', // Bruh
+    check: 'https://www.myinstants.com/media/sounds/taco-bell-bong-sfx.mp3',
+    gameOver: 'https://www.myinstants.com/media/sounds/spongebob-fail.mp3'
   },
   phonk: {
-    // Heavy bass hits and sharp mechanical clicks
-    move: 'https://actions.google.com/sounds/v1/impacts/crash.ogg',
-    capture: 'https://actions.google.com/sounds/v1/weapons/laser_gun.ogg',
-    check: 'https://actions.google.com/sounds/v1/alarms/industrial_alarm_loop.ogg',
-    gameOver: 'https://actions.google.com/sounds/v1/impacts/sub_bass_drop.ogg'
+    // Heavy bass hits
+    move: 'https://www.myinstants.com/media/sounds/hitmarker_2.mp3',
+    capture: 'https://www.myinstants.com/media/sounds/bass-boost.mp3',
+    check: 'https://www.myinstants.com/media/sounds/fbi-open-up-sfx.mp3',
+    gameOver: 'https://www.myinstants.com/media/sounds/gta-v-wasted.mp3'
   }
 };
 
-const EMOJI_SKINS = {
+const pieceImages = {
   classic: {
-    wP: '♙', wN: '♘', wB: '♗', wR: '♖', wQ: '♕', wK: '♔',
-    bP: '♟', bN: '♞', bB: '♝', bR: '♜', bQ: '♛', bK: '♚'
+    wP: '/skins/classic/wP.svg', wN: '/skins/classic/wN.svg', wB: '/skins/classic/wB.svg', wR: '/skins/classic/wR.svg', wQ: '/skins/classic/wQ.svg', wK: '/skins/classic/wK.svg',
+    bP: '/skins/classic/bP.svg', bN: '/skins/classic/bN.svg', bB: '/skins/classic/bB.svg', bR: '/skins/classic/bR.svg', bQ: '/skins/classic/bQ.svg', bK: '/skins/classic/bK.svg'
   },
   crypto: {
-    wP: '🪙', wN: '🐕', wB: '💎', wR: '🚀', wQ: '📈', wK: '🧑‍🚀', 
-    bP: '💸', bN: '🐻', bB: '🤡', bR: '🏢', bQ: '📉', bK: '👴'
+    wP: '/skins/crypto/P.png', wN: '/skins/crypto/N.png', wB: '/skins/crypto/B.png', wR: '/skins/crypto/R.png', wQ: '/skins/crypto/Q.png', wK: '/skins/crypto/K.png',
+    bP: '/skins/crypto/P.png', bN: '/skins/crypto/N.png', bB: '/skins/crypto/B.png', bR: '/skins/crypto/R.png', bQ: '/skins/crypto/Q.png', bK: '/skins/crypto/K.png'
   },
   sigma: {
-    wP: '🍷', wN: '🗿', wB: '🏋️', wR: '🏰', wQ: '👑', wK: '😎', 
-    bP: '💀', bN: '🤓', bB: '🍼', bR: '🏚️', bQ: '💸', bK: '😭'
-  },
+    wP: '/skins/sigma/P.png', wN: '/skins/sigma/N.png', wB: '/skins/sigma/B.png', wR: '/skins/sigma/R.png', wQ: '/skins/sigma/Q.png', wK: '/skins/sigma/K.png',
+    bP: '/skins/sigma/P.png', bN: '/skins/sigma/N.png', bB: '/skins/sigma/B.png', bR: '/skins/sigma/R.png', bQ: '/skins/sigma/Q.png', bK: '/skins/sigma/K.png'
+  }
 };
 
 const AI_PHRASES = [
@@ -54,7 +55,70 @@ const AI_PHRASES = [
   "This is so cap bro. 🧢",
 ];
 
-const PIECE_VALUES = { p: 10, n: 30, b: 30, r: 50, q: 90, k: 9000 };
+const PIECE_VALUES = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
+
+const PST = {
+  p: [
+    [0,  0,  0,  0,  0,  0,  0,  0],
+    [50, 50, 50, 50, 50, 50, 50, 50],
+    [10, 10, 20, 30, 30, 20, 10, 10],
+    [5,  5, 10, 25, 25, 10,  5,  5],
+    [0,  0,  0, 20, 20,  0,  0,  0],
+    [5, -5,-10,  0,  0,-10, -5,  5],
+    [5, 10, 10,-20,-20, 10, 10,  5],
+    [0,  0,  0,  0,  0,  0,  0,  0]
+  ],
+  n: [
+    [-50,-40,-30,-30,-30,-30,-40,-50],
+    [-40,-20,  0,  0,  0,  0,-20,-40],
+    [-30,  0, 10, 15, 15, 10,  0,-30],
+    [-30,  5, 15, 20, 20, 15,  5,-30],
+    [-30,  0, 15, 20, 20, 15,  0,-30],
+    [-30,  5, 10, 15, 15, 10,  5,-30],
+    [-40,-20,  0,  5,  5,  0,-20,-40],
+    [-50,-40,-30,-30,-30,-30,-40,-50]
+  ],
+  b: [
+    [-20,-10,-10,-10,-10,-10,-10,-20],
+    [-10,  0,  0,  0,  0,  0,  0,-10],
+    [-10,  0,  5, 10, 10,  5,  0,-10],
+    [-10,  5,  5, 10, 10,  5,  5,-10],
+    [-10,  0, 10, 10, 10, 10,  0,-10],
+    [-10, 10, 10, 10, 10, 10, 10,-10],
+    [-10,  5,  0,  0,  0,  0,  5,-10],
+    [-20,-10,-10,-10,-10,-10,-10,-20]
+  ],
+  r: [
+    [0,  0,  0,  0,  0,  0,  0,  0],
+    [5, 10, 10, 10, 10, 10, 10,  5],
+    [-5,  0,  0,  0,  0,  0,  0, -5],
+    [-5,  0,  0,  0,  0,  0,  0, -5],
+    [-5,  0,  0,  0,  0,  0,  0, -5],
+    [-5,  0,  0,  0,  0,  0,  0, -5],
+    [-5,  0,  0,  0,  0,  0,  0, -5],
+    [0,  0,  0,  5,  5,  0,  0,  0]
+  ],
+  q: [
+    [-20,-10,-10, -5, -5,-10,-10,-20],
+    [-10,  0,  0,  0,  0,  0,  0,-10],
+    [-10,  0,  5,  5,  5,  5,  0,-10],
+    [ -5,  0,  5,  5,  5,  5,  0, -5],
+    [  0,  0,  5,  5,  5,  5,  0, -5],
+    [-10,  5,  5,  5,  5,  5,  0,-10],
+    [-10,  0,  5,  0,  0,  0,  0,-10],
+    [-20,-10,-10, -5, -5,-10,-10,-20]
+  ],
+  k: [
+    [-30,-40,-40,-50,-50,-40,-40,-30],
+    [-30,-40,-40,-50,-50,-40,-40,-30],
+    [-30,-40,-40,-50,-50,-40,-40,-30],
+    [-30,-40,-40,-50,-50,-40,-40,-30],
+    [-20,-30,-30,-40,-40,-30,-30,-20],
+    [-10,-20,-20,-20,-20,-20,-20,-10],
+    [20, 20,  0,  0,  0,  0, 20, 20],
+    [20, 30, 10,  0,  0, 10, 30, 20]
+  ]
+};
 
 function evaluateBoard(board) {
   let score = 0;
@@ -63,7 +127,9 @@ function evaluateBoard(board) {
       const piece = board[r][c];
       if (piece) {
         const val = PIECE_VALUES[piece.type];
-        score += piece.color === 'w' ? val : -val;
+        const pstVal = PST[piece.type][piece.color === 'w' ? r : 7 - r][c];
+        const totalVal = val + pstVal;
+        score += piece.color === 'w' ? totalVal : -totalVal;
       }
     }
   }
@@ -96,6 +162,12 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
   const [aiTime, setAiTime] = useState(600);
   const [gameActive, setGameActive] = useState(false);
 
+  // Multiplayer State
+  const [socket, setSocket] = useState(null);
+  const [onlineRoom, setOnlineRoom] = useState(null);
+  const [isSearchingMatch, setIsSearchingMatch] = useState(false);
+  const [onlineOpponent, setOnlineOpponent] = useState('');
+
   // History & Captured Pieces
   const [moveHistory, setMoveHistory] = useState([]);
   const [capturedWhite, setCapturedWhite] = useState([]);
@@ -115,13 +187,34 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
   // Post-game reward notification state
   const [rewardPopup, setRewardPopup] = useState(null);
 
+  // Brainrot Visual Effects state
+  const [screenShake, setScreenShake] = useState(false);
+  const [visualPopups, setVisualPopups] = useState([]);
+
+  const triggerBrainrotEffects = useCallback(() => {
+    setScreenShake(true);
+    setTimeout(() => setScreenShake(false), 300);
+
+    const texts = ["SIGMA!", "SKIBIDI", "COPE", "REKT", "FATALITY", "WIGGLE", "GET GOOD", "SHEESH", "NO SHOT", "SUS"];
+    const text = texts[Math.floor(Math.random() * texts.length)];
+    const id = Date.now() + Math.random();
+    const top = 10 + Math.random() * 60;
+    const left = 10 + Math.random() * 60;
+    const color = ["#ef4444", "#eab308", "#3b82f6", "#a855f7", "#22c55e"][Math.floor(Math.random() * 5)];
+
+    setVisualPopups(prev => [...prev, { id, text, top: `${top}%`, left: `${left}%`, color }]);
+    setTimeout(() => {
+      setVisualPopups(prev => prev.filter(p => p.id !== id));
+    }, 1200);
+  }, []);
+
   // ── Sounds Ref
   const soundsRef = useRef({});
   useEffect(() => {
     const pack = AUDIO_PACKS[activeAudioPack] || AUDIO_PACKS.classic;
     const s = {};
     for (const [k, url] of Object.entries(pack)) {
-      s[k] = new Howl({ src: [url], volume: 0.55 });
+      s[k] = new Howl({ src: [url], volume: 0.55, html5: true });
     }
     soundsRef.current = s;
   }, [activeAudioPack]);
@@ -234,10 +327,12 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
         });
         selectedMove = choices[Math.floor(Math.random() * choices.length)];
       } else {
+        const aiColor = currentGame.turn();
+        const isAIWhite = aiColor === 'w';
         let bestMove = null;
-        let bestValue = Infinity;
+        let bestValue = isAIWhite ? -Infinity : Infinity;
         
-        const minimax = (gameInstance, depth, isMaximizing) => {
+        const minimax = (gameInstance, depth, alpha, beta, isMaximizing) => {
           if (depth === 0 || gameInstance.isGameOver()) {
             return evaluateBoard(gameInstance.board());
           }
@@ -247,8 +342,10 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
             for (let i = 0; i < instMoves.length; i++) {
               const cpy = new Chess(gameInstance.fen());
               cpy.move(instMoves[i]);
-              const score = minimax(cpy, depth - 1, false);
+              const score = minimax(cpy, depth - 1, alpha, beta, false);
               maxEval = Math.max(maxEval, score);
+              alpha = Math.max(alpha, score);
+              if (beta <= alpha) break; // Beta cutoff
             }
             return maxEval;
           } else {
@@ -256,20 +353,30 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
             for (let i = 0; i < instMoves.length; i++) {
               const cpy = new Chess(gameInstance.fen());
               cpy.move(instMoves[i]);
-              const score = minimax(cpy, depth - 1, true);
+              const score = minimax(cpy, depth - 1, alpha, beta, true);
               minEval = Math.min(minEval, score);
+              beta = Math.min(beta, score);
+              if (beta <= alpha) break; // Alpha cutoff
             }
             return minEval;
           }
         };
 
+        // Increase depth from 2 to 3 for harder AI, thanks to alpha-beta pruning speedup
         moves.forEach(m => {
           const cpy = new Chess(currentGame.fen());
           cpy.move(m.san);
-          const score = minimax(cpy, 2, true);
-          if (score < bestValue) {
-            bestValue = score;
-            bestMove = m;
+          const score = minimax(cpy, 2, -Infinity, Infinity, !isAIWhite);
+          if (isAIWhite) {
+            if (score > bestValue) {
+              bestValue = score;
+              bestMove = m;
+            }
+          } else {
+            if (score < bestValue) {
+              bestValue = score;
+              bestMove = m;
+            }
           }
         });
 
@@ -287,6 +394,7 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
           } else {
             setCapturedBlack(c => [...c, result.captured]);
           }
+          triggerBrainrotEffects();
         }
 
         setMoveHistory(h => [...h, result.san]);
@@ -328,6 +436,9 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
     setCapturedWhite([]);
     setCapturedBlack([]);
     setRewardPopup(null);
+    setOnlineRoom(null);
+    setOnlineOpponent('');
+    setIsSearchingMatch(false);
     gameStartTimeRef.current = Date.now();
 
     if (color === 'b') {
@@ -336,6 +447,53 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
       setAiThinking(false);
     }
   }, [makeAIMove, timeControl]);
+
+  // Multiplayer Hook
+  useEffect(() => {
+    const s = io();
+    setSocket(s);
+
+    s.on('match_found', (data) => {
+      const newGame = new Chess();
+      setGame(newGame);
+      setPlayerColor(data.color);
+      setOnlineRoom(data.roomId);
+      setOnlineOpponent(data.opponent);
+      setIsSearchingMatch(false);
+      setGameStatus(`⚔️ Match found vs ${data.opponent}! You are ${data.color === 'w' ? 'White' : 'Black'}.`);
+      setGameActive(true);
+      setMoveHistory([]);
+      setCapturedWhite([]);
+      setCapturedBlack([]);
+      gameStartTimeRef.current = Date.now();
+      playSound('move');
+    });
+
+    s.on('move', (moveSan) => {
+      setGame(prev => {
+        const gameCopy = new Chess(prev.fen());
+        try {
+          const result = gameCopy.move(moveSan);
+          if (result) {
+            playSound(result.captured ? 'capture' : 'move');
+            if (result.captured) {
+              triggerBrainrotEffects();
+            }
+          }
+        } catch(e) {}
+        return gameCopy;
+      });
+    });
+
+    return () => s.disconnect();
+  }, [playSound, triggerBrainrotEffects]);
+
+  const findOnlineMatch = useCallback(() => {
+    if (!socket) return;
+    setIsSearchingMatch(true);
+    setGameStatus('🔍 Searching for an opponent...');
+    socket.emit('find_match', username || 'Anonymous');
+  }, [socket, username]);
 
   // Execute Move
   const executeMove = useCallback((from, to) => {
@@ -357,9 +515,14 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
         } else {
           setCapturedBlack(c => [...c, result.captured]);
         }
+        triggerBrainrotEffects();
       }
 
       setMoveHistory(h => [...h, result.san]);
+
+      if (onlineRoom && socket) {
+        socket.emit('move', { room: onlineRoom, move: result.san });
+      }
 
       if (gameCopy.isGameOver()) {
         setGameActive(false);
@@ -375,9 +538,11 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
         playSound(result.captured ? 'capture' : 'move');
       }
 
-      if (!gameCopy.isGameOver()) {
+      if (!onlineRoom) {
+        setAiThinking(true);
         makeAIMove(gameCopy);
       }
+      
       return true;
     } catch (e) {
       console.error("User Move Error:", e);
@@ -451,27 +616,28 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
 
         let pieceDisplay = null;
         if (piece) {
-          const skinMap = EMOJI_SKINS[activePack] || EMOJI_SKINS.classic;
           const key = `${piece.color}${piece.type.toUpperCase()}`;
           const isWhitePiece = piece.color === 'w';
+          const src = pieceImages[activePack] ? pieceImages[activePack][key] : pieceImages['classic'][key];
+          const isImgSkin = activePack !== 'classic';
+          
+          let pieceStyle = { width: '85%', height: '85%', objectFit: 'contain', pointerEvents: 'none', userSelect: 'none' };
+          
+          if (isImgSkin) {
+            if (isWhitePiece) {
+              pieceStyle.mixBlendMode = 'multiply';
+            } else {
+              pieceStyle.mixBlendMode = 'screen';
+              pieceStyle.filter = 'invert(1) hue-rotate(180deg)';
+            }
+          } else {
+            pieceStyle.filter = 'drop-shadow(2px 3px 0px rgba(0,0,0,0.4))';
+          }
 
-          // Apply thick pixel art black outlines & solid offset shadow to look EXACTLY like high-end retro assets
           pieceDisplay = (
-            <span style={{ 
-              fontSize: 'clamp(1.5rem, 8.5vw, 2.5rem)',
-              fontWeight: '900',
-              color: activePack === 'classic' ? (isWhitePiece ? '#ffffff' : '#111827') : 'inherit',
-              userSelect: 'none', 
-              // Perfect 8-bit black stroke outline + solid drop shadow
-              textShadow: '2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000, 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000',
-              filter: 'drop-shadow(2px 2px 0px rgba(0,0,0,0.95))',
-              lineHeight: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              {skinMap[key]}
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+              <img src={src} alt={key} style={pieceStyle} draggable={false} />
+            </div>
           );
         }
 
@@ -637,12 +803,15 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
 
           <p style={{ color:'var(--foreground)', opacity: 0.8, marginBottom:'2rem', fontSize:'0.95rem', fontWeight: 600 }}>Pick your side and start accumulating ELO & Coins fr fr!</p>
           
-          <div style={{ display:'flex', gap:'1.5rem', justifyContent:'center' }}>
-            <button onClick={() => startGame('w')} className="btn-primary" style={{ padding:'1rem 2rem', display:'flex', flexDirection:'column', alignItems:'center', gap:'0.4rem' }}>
-              <span style={{ fontSize:'2rem' }}>♙</span> Play White
+          <div style={{ display:'flex', gap:'1rem', justifyContent:'center', flexWrap: 'wrap' }}>
+            <button onClick={() => startGame('w')} className="btn-primary" style={{ padding:'0.8rem 1.5rem', display:'flex', flexDirection:'column', alignItems:'center', gap:'0.2rem' }}>
+              <span style={{ fontSize:'1.5rem' }}>♙</span> Play White (AI)
             </button>
-            <button onClick={() => startGame('b')} className="btn-secondary" style={{ padding:'1rem 2rem', display:'flex', flexDirection:'column', alignItems:'center', gap:'0.4rem' }}>
-              <span style={{ fontSize:'2rem' }}>♟</span> Play Black
+            <button onClick={() => startGame('b')} className="btn-secondary" style={{ padding:'0.8rem 1.5rem', display:'flex', flexDirection:'column', alignItems:'center', gap:'0.2rem' }}>
+              <span style={{ fontSize:'1.5rem' }}>♟</span> Play Black (AI)
+            </button>
+            <button onClick={findOnlineMatch} disabled={isSearchingMatch} className="btn-primary" style={{ padding:'0.8rem 1.5rem', display:'flex', flexDirection:'column', alignItems:'center', gap:'0.2rem', background: isSearchingMatch ? '#94a3b8' : 'var(--accent-purple)' }}>
+              <span style={{ fontSize:'1.5rem' }}>🌍</span> {isSearchingMatch ? 'Searching...' : 'Play Online'}
             </button>
           </div>
         </div>
@@ -662,23 +831,34 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
           {/* Board Status / Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#ffffff', border: '2px solid var(--border-dark)', padding: '10px 14px', borderRadius: 12, boxShadow: '3px 3px 0px 0px var(--border-dark)' }}>
             <span style={{ fontSize: '0.85rem', color: 'var(--foreground)', fontWeight: '800' }}>
-              Opponent (AI): <b style={{ color: game.turn() !== playerColor ? 'var(--accent-primary)' : 'var(--foreground)' }}>{formatTime(aiTime)}</b>
+              Opponent: <b style={{ color: game.turn() !== playerColor ? 'var(--accent-primary)' : 'var(--foreground)' }}>
+                {onlineOpponent ? `${onlineOpponent} (Online)` : `AI (${formatTime(aiTime)})`}
+              </b>
             </span>
             <span style={{ fontSize: '0.85rem', textTransform: 'capitalize', color: 'var(--accent-secondary)', fontWeight: '800' }}>
-              Difficulty: {difficulty}
+              {onlineOpponent ? 'Ranked Match' : `Difficulty: ${difficulty}`}
             </span>
           </div>
 
           {/* Captured Pieces Black */}
           <div style={{ display: 'flex', minHeight: 24, gap: 4, opacity: 0.9, fontSize: '1.25rem', paddingLeft: 6 }}>
             {capturedBlack.map((p, idx) => {
-              const skinMap = EMOJI_SKINS[activePack] || EMOJI_SKINS.classic;
-              return <span key={idx} style={{ filter: 'drop-shadow(1px 1px 0px #000)' }}>{skinMap[`b${p.toUpperCase()}`]}</span>;
+              const src = pieceImages[activePack][`b${p.toUpperCase()}`];
+              const isImg = activePack !== 'classic';
+              return (
+                <span key={idx} style={{ display: 'inline-block', width: 24, height: 24 }}>
+                  <img src={src} alt="captured" style={{
+                    width: '100%', height: '100%', objectFit: 'contain',
+                    filter: isImg ? 'invert(1) hue-rotate(180deg)' : 'none',
+                    mixBlendMode: isImg ? 'screen' : 'normal'
+                  }} />
+                </span>
+              );
             })}
           </div>
 
           {/* Responsive Chessboard Container */}
-          <div className="neo-panel" style={{ 
+          <div className={`neo-panel ${screenShake ? 'shake-animation' : ''}`} style={{ 
             overflow: 'visible', 
             width: '100%',
             maxWidth: '520px',
@@ -690,16 +870,42 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
             <div className="neo-sticker sticker-pink" style={{ top: '-12px', left: '-15px', transform: 'rotate(-8deg)', fontSize: '0.65rem' }}>✨ 200 IQ MOVE</div>
             <div className="neo-sticker sticker-yellow" style={{ bottom: '-10px', right: '-15px', transform: 'rotate(6deg)', fontSize: '0.65rem' }}>🧠 BIG BRAIN ONLY</div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', width: '100%', borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border-dark)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', width: '100%', borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border-dark)', position: 'relative' }}>
               {renderBoard()}
+              
+              {/* Visual Popups rendering */}
+              {visualPopups.map(p => (
+                <div key={p.id} className="floating-popup" style={{
+                  position: 'absolute',
+                  top: p.top,
+                  left: p.left,
+                  color: p.color,
+                  textShadow: '2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 4px 4px 0 #000',
+                  fontWeight: 900,
+                  fontSize: 'clamp(2rem, 5vw, 4rem)',
+                  pointerEvents: 'none',
+                  zIndex: 50,
+                  transform: 'translate(-50%, -50%) rotate(-10deg)',
+                }}>
+                  {p.text}
+                </div>
+              ))}
             </div>
           </div>
 
           {/* Captured Pieces White */}
           <div style={{ display: 'flex', minHeight: 24, gap: 4, opacity: 0.9, fontSize: '1.25rem', paddingLeft: 6 }}>
             {capturedWhite.map((p, idx) => {
-              const skinMap = EMOJI_SKINS[activePack] || EMOJI_SKINS.classic;
-              return <span key={idx} style={{ filter: 'drop-shadow(1px 1px 0px #000)' }}>{skinMap[`w${p.toUpperCase()}`]}</span>;
+              const src = pieceImages[activePack][`w${p.toUpperCase()}`];
+              const isImg = activePack !== 'classic';
+              return (
+                <span key={idx} style={{ display: 'inline-block', width: 24, height: 24 }}>
+                  <img src={src} alt="captured" style={{
+                    width: '100%', height: '100%', objectFit: 'contain',
+                    mixBlendMode: isImg ? 'multiply' : 'normal'
+                  }} />
+                </span>
+              );
             })}
           </div>
 
@@ -751,6 +957,36 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
         </div>
 
       </div>
+
+      {/* Embedded CSS for animations */}
+      <style>{`
+        @keyframes shake {
+          0% { transform: translate(1px, 1px) rotate(0deg); }
+          10% { transform: translate(-1px, -2px) rotate(-1deg); }
+          20% { transform: translate(-3px, 0px) rotate(1deg); }
+          30% { transform: translate(3px, 2px) rotate(0deg); }
+          40% { transform: translate(1px, -1px) rotate(1deg); }
+          50% { transform: translate(-1px, 2px) rotate(-1deg); }
+          60% { transform: translate(-3px, 1px) rotate(0deg); }
+          70% { transform: translate(3px, 1px) rotate(-1deg); }
+          80% { transform: translate(-1px, -1px) rotate(1deg); }
+          90% { transform: translate(1px, 2px) rotate(0deg); }
+          100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+        .shake-animation {
+          animation: shake 0.3s;
+          animation-iteration-count: 1;
+        }
+        @keyframes floatUpFade {
+          0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5) rotate(-10deg); }
+          20% { opacity: 1; transform: translate(-50%, -60%) scale(1.2) rotate(-5deg); }
+          80% { opacity: 1; transform: translate(-50%, -90%) scale(1) rotate(5deg); }
+          100% { opacity: 0; transform: translate(-50%, -100%) scale(0.8) rotate(10deg); }
+        }
+        .floating-popup {
+          animation: floatUpFade 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+      `}</style>
 
       {/* Toast Notifications */}
       <div style={{ position: 'fixed', top: 20, right: 20, display: 'flex', flexDirection: 'column', gap: '0.5rem', zIndex: 999, pointerEvents: 'none' }}>
