@@ -89,7 +89,7 @@ MemeChess is a **full-stack competitive chess platform** built for the brainrot 
 ## 🚀 Getting Started (Local Development)
 
 ### Prerequisites
-- Node.js 18+
+- Node.js 20.9+ (required by Next.js 16)
 - A [Neon](https://neon.tech) or any PostgreSQL database
 
 ### Installation
@@ -100,20 +100,41 @@ git clone https://github.com/willutoi/memechess.git
 cd memechess
 
 # 2. Install dependencies
-npm install
+npm ci
 
 # 3. Set up environment variables
 cp .env.example .env
-# Edit .env and add your DATABASE_URL
+# PowerShell: Copy-Item .env.example .env
+# Edit .env: set DATABASE_URL, NEXTAUTH_SECRET, and ADMIN_PASSWORD
 
-# 4. Push database schema
-npx prisma db push
+# 4. Initialize a local/development database explicitly
+npm run db:push
 
 # 5. Run the dev server
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) and start playing!
+
+### Checks and production server
+
+```bash
+npm test
+npm run build
+npm start
+```
+
+`npm run dev` starts the custom Next.js + Socket.IO server in development mode.
+`npm start` serves the production build, even when `NODE_ENV` is unset. Set `PORT`
+to change the default port (3000); `/ping` is available for health checks.
+
+The build generates Prisma Client and compiles the app without changing the
+database. Schema changes are a separate, explicit operation: `npm run db:push`
+is suitable for a development database and retains Prisma's data-loss checks.
+Review and back up an existing database before applying schema changes there.
+
+Online matchmaking requires a persistent Node.js server running `npm start`.
+A serverless-only deployment of Next.js does not run this custom Socket.IO server.
 
 ---
 
@@ -123,6 +144,8 @@ Open [http://localhost:3000](http://localhost:3000) and start playing!
 |----------|-------------|
 | `DATABASE_URL` | PostgreSQL connection string (e.g. from Neon) |
 | `ADMIN_PASSWORD` | Secret password for the `/admin` panel |
+| `NEXTAUTH_SECRET` | Random secret for NextAuth sessions |
+| `NEXTAUTH_URL` | Canonical app URL, e.g. `http://localhost:3000` locally |
 
 ---
 
