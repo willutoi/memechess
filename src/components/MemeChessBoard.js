@@ -3,6 +3,7 @@ import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { Chess } from 'chess.js';
 import { Howl } from 'howler';
 import { io } from 'socket.io-client';
+import { createMatchLifecycle, getGameOutcome } from '../lib/match-lifecycle.mjs';
 
 // Incredibly pleasant and satisfying CORS-safe sounds
 const AUDIO_PACKS = {
@@ -138,7 +139,7 @@ function evaluateBoard(board) {
 
 const TIME_CONTROLS = [
   { label: '1+0', name: 'Bullet', seconds: 60 },
-  { label: '3+2', name: 'Blitz', seconds: 180 },
+  { label: '3+2', name: 'Blitz', seconds: 180, increment: 2 },
   { label: '10+0', name: 'Rapid', seconds: 600 },
   { label: '∞', name: 'Classical', seconds: 0 },
 ];
@@ -161,10 +162,11 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
   const [playerTime, setPlayerTime] = useState(600);
   const [aiTime, setAiTime] = useState(600);
   const [gameActive, setGameActive] = useState(false);
+  const [matchId, setMatchId] = useState(null);
+  const [unlimitedTime, setUnlimitedTime] = useState(false);
 
   // Multiplayer State
-  const [socket, setSocket] = useState(null);
-  const [onlineRoom, setOnlineRoom] = useState(null);
+  const socketRef = useRef(null);
   const [isSearchingMatch, setIsSearchingMatch] = useState(false);
   const [onlineOpponent, setOnlineOpponent] = useState('');
 
@@ -174,7 +176,13 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
   const [capturedBlack, setCapturedBlack] = useState([]);
 
   // Game duration tracking
-  const gameStartTimeRef = useRef(null);
+  const lifecycleRef = useRef(null);
+  if (lifecycleRef.current === null) lifecycleRef.current = createMatchLifecycle();
+  const gameRef = useRef(game);
+  const clocksRef = useRef({ player: 600, opponent: 600 });
+  const searchingRef = useRef(false);
+
+  useEffect(() => () => lifecycleRef.current.stop(), []);
 
   // Toast notifications
   const [toasts, setToasts] = useState([]);
@@ -217,6 +225,7 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
       s[k] = new Howl({ src: [url], volume: 0.55, html5: true });
     }
     soundsRef.current = s;
+    return () => Object.values(s).forEach(sound => sound.unload());
   }, [activeAudioPack]);
 
   const playSound = useCallback((type) => {
@@ -234,55 +243,21 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
     return () => clearInterval(id);
   }, []);
 
-  // ── Clocks Timer Hook
-  useEffect(() => {
-    if (!gameActive || game.isGameOver()) return;
-
-    const timer = setInterval(() => {
-      const turn = game.turn();
-      if (turn === playerColor) {
-        setPlayerTime(t => {
-          if (t <= 1) {
-            setGameStatus('⌛ Timeout! AI Wins!');
-            setGameActive(false);
-            playSound('gameOver');
-            recordGameResult('loss');
-            return 0;
-          }
-          return t - 1;
-        });
-      } else {
-        setAiTime(t => {
-          if (t <= 1) {
-            setGameStatus('🏆 Timeout! You Win!');
-            setGameActive(false);
-            playSound('gameOver');
-            recordGameResult('win');
-            return 0;
-          }
-          return t - 1;
-        });
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [gameActive, playerColor, game, playSound]);
-
-  // Record ELO in DB
-  const recordGameResult = async (res, finalMoveCount) => {
+  // Result eligibility is claimed synchronously before any network request.
+  const recordGameResult = useCallback(async (res, match) => {
     const storedUser = localStorage.getItem('memechess_user');
     if (!storedUser) return;
-    const duration = gameStartTimeRef.current ? Math.floor((Date.now() - gameStartTimeRef.current) / 1000) : 0;
+    const duration = Math.floor((Date.now() - match.startedAt) / 1000);
     try {
       const response = await fetch('/api/game-result', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: storedUser, result: res, difficulty, moveCount: finalMoveCount || 0, duration })
+        body: JSON.stringify({ username: storedUser, result: res, difficulty: match.difficulty, moveCount: match.moveCount, duration })
       });
       if (response.ok) {
         const data = await response.json();
         window.dispatchEvent(new CustomEvent('memechess_user_updated'));
-        // Show reward popup
+        if (!lifecycleRef.current.isCurrent(match.id)) return;
         const msgs = [];
         if (data.coinsGained > 0) msgs.push(`+${data.coinsGained} 🪙 MemeCoins`);
         const eloSign = data.eloChange >= 0 ? '+' : '';
@@ -292,19 +267,109 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
           data.newAchievements.forEach(a => addToast(`🏆 Achievement unlocked: ${a.icon} ${a.title}`, '#fbbf24'));
         }
         setRewardPopup(msgs);
-        setTimeout(() => setRewardPopup(null), 6000);
+        setTimeout(() => {
+          if (lifecycleRef.current.isCurrent(match.id)) setRewardPopup(null);
+        }, 6000);
       }
     } catch (e) {
       console.error(e);
     }
-  };
+  }, [addToast]);
+
+  const finishMatch = useCallback((outcome, status, matchId) => {
+    const match = lifecycleRef.current.finish(outcome, matchId);
+    if (!match) return false;
+    setGameActive(false);
+    setAiThinking(false);
+    setMoveFrom('');
+    setOptionSquares({});
+    setGameStatus(status);
+    playSound('gameOver');
+    if (outcome) recordGameResult(outcome, match);
+    return true;
+  }, [playSound, recordGameResult]);
+
+  // Keep side effects outside React state updater functions (Strict Mode may replay them).
+  useEffect(() => {
+    const match = lifecycleRef.current.current;
+    if (!gameActive || !match?.seconds) return;
+    const timer = setInterval(() => {
+      if (!lifecycleRef.current.isActive(match.id)) return;
+      const isPlayer = gameRef.current.turn() === match.color;
+      const key = isPlayer ? 'player' : 'opponent';
+      const remaining = Math.max(0, clocksRef.current[key] - 1);
+      clocksRef.current[key] = remaining;
+      (isPlayer ? setPlayerTime : setAiTime)(remaining);
+      if (remaining === 0) {
+        finishMatch(isPlayer ? 'loss' : 'win', isPlayer ? '⌛ Timeout! Opponent wins!' : '🏆 Timeout! You win!', match.id);
+      }
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [gameActive, matchId, finishMatch]);
+
+  const applyMove = useCallback((nextGame, move, matchId) => {
+    const match = lifecycleRef.current.current;
+    if (!lifecycleRef.current.isActive(matchId)) return;
+    match.moveCount++;
+    gameRef.current = nextGame;
+    setGame(nextGame);
+    setMoveFrom('');
+    setOptionSquares({});
+    setMoveHistory(history => [...history, move.san]);
+    if (move.captured) {
+      (move.color === 'w' ? setCapturedWhite : setCapturedBlack)(pieces => [...pieces, move.captured]);
+      triggerBrainrotEffects();
+    }
+    if (match.increment) {
+      const isPlayer = move.color === match.color;
+      const key = isPlayer ? 'player' : 'opponent';
+      clocksRef.current[key] += match.increment;
+      (isPlayer ? setPlayerTime : setAiTime)(clocksRef.current[key]);
+    }
+    const outcome = getGameOutcome(nextGame, match.color);
+    if (outcome) {
+      const status = outcome === 'draw' ? '🤝 Draw!' : outcome === 'win' ? '🏆 You win!' : '☠️ Checkmate! You lose.';
+      finishMatch(outcome, status, match.id);
+    } else {
+      setGameStatus(nextGame.isCheck() ? '⚡ Check!' : '');
+      playSound(nextGame.isCheck() ? 'check' : move.captured ? 'capture' : 'move');
+    }
+  }, [finishMatch, playSound, triggerBrainrotEffects]);
+
+  const beginMatch = useCallback((details) => {
+    const newGame = new Chess();
+    const match = lifecycleRef.current.start({ ...details, startedAt: Date.now() });
+    gameRef.current = newGame;
+    clocksRef.current = { player: match.seconds, opponent: match.seconds };
+    searchingRef.current = false;
+    setGame(newGame);
+    setPlayerColor(match.color);
+    setGameStatus('');
+    setMoveFrom('');
+    setOptionSquares({});
+    setPlayerTime(match.seconds);
+    setAiTime(match.seconds);
+    setMatchId(match.id);
+    setUnlimitedTime(match.seconds === 0);
+    setGameActive(true);
+    setAiThinking(false);
+    setMoveHistory([]);
+    setCapturedWhite([]);
+    setCapturedBlack([]);
+    setRewardPopup(null);
+    setOnlineOpponent(match.opponent || '');
+    setIsSearchingMatch(false);
+    return newGame;
+  }, []);
 
   // AI Move Engine
   const makeAIMove = useCallback((currentGame) => {
-    if (currentGame.isGameOver()) return;
+    const match = lifecycleRef.current.current;
+    if (!lifecycleRef.current.isActive() || match.room || currentGame.isGameOver()) return;
+    const difficulty = match.difficulty;
     setAiThinking(true);
 
-    setTimeout(() => {
+    lifecycleRef.current.defer(() => {
       const moves = currentGame.moves({ verbose: true });
       if (!moves.length) { setAiThinking(false); return; }
 
@@ -386,173 +451,117 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
       const gameCopy = new Chess(currentGame.fen());
       try {
         const result = gameCopy.move(selectedMove);
-        setGame(gameCopy);
-
-        if (result.captured) {
-          if (result.color === 'w') {
-            setCapturedWhite(c => [...c, result.captured]);
-          } else {
-            setCapturedBlack(c => [...c, result.captured]);
-          }
-          triggerBrainrotEffects();
-        }
-
-        setMoveHistory(h => [...h, result.san]);
-
-        if (gameCopy.isGameOver()) {
-          setGameActive(false);
-          const isDraw = gameCopy.isDraw();
-          setGameStatus(isDraw ? '🤝 Draw!' : '☠️ Checkmate!');
-          playSound('gameOver');
-          recordGameResult(isDraw ? 'draw' : playerColor === 'w' ? 'loss' : 'win');
-        } else if (gameCopy.isCheck()) {
-          setGameStatus('⚡ Check!');
-          playSound('check');
-        } else {
-          setGameStatus('');
-          playSound(result.captured ? 'capture' : 'move');
-        }
+        applyMove(gameCopy, result, match.id);
       } catch (e) {
         console.error("AI execution error:", e);
       }
-
       setAiThinking(false);
-    }, 600);
-  }, [difficulty, playerColor, playSound]);
+    }, 600, match.id);
+  }, [applyMove]);
 
-  // Start Game Handler
+  // Starting locally cancels queue membership before a late match can arrive.
   const startGame = useCallback((color) => {
-    const newGame = new Chess();
-    const startSecs = timeControl.seconds || 0;
-    setGame(newGame);
-    setPlayerColor(color);
-    setGameStatus('');
+    const socket = socketRef.current;
+    searchingRef.current = false;
+    socket?.emit('cancel_match');
+    socket?.emit('leave_match');
+    const newGame = beginMatch({ color, difficulty, seconds: timeControl.seconds, increment: timeControl.increment || 0 });
+    if (color === 'b') makeAIMove(newGame);
+  }, [beginMatch, difficulty, makeAIMove, timeControl]);
+
+  const leaveGame = useCallback(() => {
+    const socket = socketRef.current;
+    const match = lifecycleRef.current.current;
+    if (match?.active && !match.room) finishMatch('loss', 'You resigned.', match.id);
+    socket?.emit('cancel_match');
+    socket?.emit('leave_match', match?.room ? { room: match.room } : undefined);
+    searchingRef.current = false;
+    lifecycleRef.current.stop();
+    setGameActive(false);
+    setAiThinking(false);
+    setPlayerColor(null);
     setMoveFrom('');
     setOptionSquares({});
-    setPlayerTime(startSecs || 99999);
-    setAiTime(startSecs || 99999);
-    setGameActive(true);
-    setMoveHistory([]);
-    setCapturedWhite([]);
-    setCapturedBlack([]);
-    setRewardPopup(null);
-    setOnlineRoom(null);
     setOnlineOpponent('');
     setIsSearchingMatch(false);
-    gameStartTimeRef.current = Date.now();
+    setRewardPopup(null);
+    setGameStatus('');
+  }, [finishMatch]);
 
-    if (color === 'b') {
-      makeAIMove(newGame);
-    } else {
-      setAiThinking(false);
-    }
-  }, [makeAIMove, timeControl]);
-
-  // Multiplayer Hook
   useEffect(() => {
     const s = io();
-    setSocket(s);
-
+    socketRef.current = s;
     s.on('match_found', (data) => {
-      const newGame = new Chess();
-      setGame(newGame);
-      setPlayerColor(data.color);
-      setOnlineRoom(data.roomId);
-      setOnlineOpponent(data.opponent);
-      setIsSearchingMatch(false);
+      if (!searchingRef.current) {
+        s.emit('leave_match', { room: data.roomId });
+        return;
+      }
+      // Both clients use the same clock until the server negotiates time controls.
+      beginMatch({ color: data.color, room: data.roomId, opponent: data.opponent, seconds: 600, increment: 0, difficulty: 'beginner' });
       setGameStatus(`⚔️ Match found vs ${data.opponent}! You are ${data.color === 'w' ? 'White' : 'Black'}.`);
-      setGameActive(true);
-      setMoveHistory([]);
-      setCapturedWhite([]);
-      setCapturedBlack([]);
-      gameStartTimeRef.current = Date.now();
       playSound('move');
     });
-
-    s.on('move', (moveSan) => {
-      setGame(prev => {
-        const gameCopy = new Chess(prev.fen());
-        try {
-          const result = gameCopy.move(moveSan);
-          if (result) {
-            playSound(result.captured ? 'capture' : 'move');
-            if (result.captured) {
-              triggerBrainrotEffects();
-            }
-          }
-        } catch(e) {}
-        return gameCopy;
-      });
+    s.on('move', (data) => {
+      const match = lifecycleRef.current.current;
+      if (!lifecycleRef.current.isActive() || !match.room || data?.room !== match.room || gameRef.current.turn() === match.color) return;
+      const gameCopy = new Chess(gameRef.current.fen());
+      try {
+        const move = gameCopy.move(data.move);
+        applyMove(gameCopy, move, match.id);
+      } catch (error) {
+        console.error('Invalid opponent move:', error);
+      }
     });
-
-    return () => s.disconnect();
-  }, [playSound, triggerBrainrotEffects]);
+    s.on('opponent_left', (data) => {
+      const match = lifecycleRef.current.current;
+      if (match?.room === data?.roomId) finishMatch(null, 'Opponent left the match.', match.id);
+    });
+    s.on('disconnect', () => {
+      searchingRef.current = false;
+      setIsSearchingMatch(false);
+      const match = lifecycleRef.current.current;
+      if (match?.room) finishMatch(null, 'Connection lost. Start a new match to reconnect.', match.id);
+    });
+    return () => {
+      s.disconnect();
+      socketRef.current = null;
+    };
+  }, [applyMove, beginMatch, finishMatch, playSound]);
 
   const findOnlineMatch = useCallback(() => {
-    if (!socket) return;
+    const socket = socketRef.current;
+    if (!socket || searchingRef.current) return;
+    lifecycleRef.current.stop();
+    setGameActive(false);
+    setAiThinking(false);
+    searchingRef.current = true;
     setIsSearchingMatch(true);
     setGameStatus('🔍 Searching for an opponent...');
     socket.emit('find_match', username || 'Anonymous');
-  }, [socket, username]);
+  }, [username]);
 
-  // Execute Move
   const executeMove = useCallback((from, to) => {
-    if (!playerColor || aiThinking || game.isGameOver()) return false;
-    if (game.turn() !== playerColor) return false;
-
-    const gameCopy = new Chess(game.fen());
+    const socket = socketRef.current;
+    const match = lifecycleRef.current.current;
+    const currentGame = gameRef.current;
+    if (!lifecycleRef.current.isActive() || aiThinking || currentGame.isGameOver() || currentGame.turn() !== match.color) return false;
+    const gameCopy = new Chess(currentGame.fen());
     try {
       const result = gameCopy.move({ from, to, promotion: 'q' });
       if (!result) return false;
-
-      setGame(gameCopy);
-      setMoveFrom('');
-      setOptionSquares({});
-
-      if (result.captured) {
-        if (result.color === 'w') {
-          setCapturedWhite(c => [...c, result.captured]);
-        } else {
-          setCapturedBlack(c => [...c, result.captured]);
-        }
-        triggerBrainrotEffects();
-      }
-
-      setMoveHistory(h => [...h, result.san]);
-
-      if (onlineRoom && socket) {
-        socket.emit('move', { room: onlineRoom, move: result.san });
-      }
-
-      if (gameCopy.isGameOver()) {
-        setGameActive(false);
-        const isDraw = gameCopy.isDraw();
-        setGameStatus(isDraw ? '🤝 Draw!' : '🏆 You Win!');
-        playSound('gameOver');
-        recordGameResult(isDraw ? 'draw' : 'win');
-      } else if (gameCopy.isCheck()) {
-        setGameStatus('⚡ Check!');
-        playSound('check');
-      } else {
-        setGameStatus('');
-        playSound(result.captured ? 'capture' : 'move');
-      }
-
-      if (!onlineRoom) {
-        setAiThinking(true);
-        makeAIMove(gameCopy);
-      }
-      
+      if (match.room && socket) socket.emit('move', { room: match.room, move: result.san });
+      applyMove(gameCopy, result, match.id);
+      if (!match.room && lifecycleRef.current.isActive(match.id)) makeAIMove(gameCopy);
       return true;
     } catch (e) {
-      console.error("User Move Error:", e);
+      console.error('User Move Error:', e);
       return false;
     }
-  }, [playerColor, aiThinking, game, playSound, makeAIMove]);
+  }, [aiThinking, applyMove, makeAIMove]);
 
   // Click-to-move handler
   const handleSquareClick = (squareName) => {
-    if (!playerColor || aiThinking || game.isGameOver()) return;
+    if (!lifecycleRef.current.isActive() || !playerColor || aiThinking || game.isGameOver()) return;
     if (game.turn() !== playerColor) return;
 
     if (!moveFrom) {
@@ -584,6 +593,7 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
   };
 
   const formatTime = (secs) => {
+    if (unlimitedTime) return '∞';
     const mins = Math.floor(secs / 60);
     const remaining = secs % 60;
     return `${mins.toString().padStart(2, '0')}:${remaining.toString().padStart(2, '0')}`;
@@ -936,7 +946,7 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
           {gameStatus && (
             <div style={{ background: 'rgba(124,58,237,0.05)', border: '2px solid var(--border-dark)', borderRadius: 12, padding: '12px 16px', textAlign: 'center', fontWeight: 800, color: 'var(--accent-purple)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, boxShadow: '3px 3px 0px 0px var(--border-dark)' }}>
               <span>{gameStatus}</span>
-              <button onClick={() => setPlayerColor(null)} className="btn-secondary" style={{ padding: '6px 14px', fontSize: '0.8rem', borderRadius: 8 }}>
+              <button onClick={leaveGame} className="btn-secondary" style={{ padding: '6px 14px', fontSize: '0.8rem', borderRadius: 8 }}>
                 Reset Match
               </button>
             </div>
@@ -958,7 +968,7 @@ export default function MemeChessBoard({ activePack = 'classic', activeAudioPack
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid var(--border-dark)', paddingBottom: 8, marginBottom: 10 }}>
               <h3 style={{ fontSize: '1.05rem', margin: 0, fontWeight: 800 }}>Move Log</h3>
-              <button onClick={() => setPlayerColor(null)} style={{ background: '#fee2e2', border: '2px solid var(--border-dark)', color: '#b91c1c', padding: '6px 12px', borderRadius: 8, cursor: 'pointer', fontSize: '0.8rem', fontWeight: 800, boxShadow: '2px 2px 0px 0px var(--border-dark)', transition: 'all 0.1s' }} onMouseEnter={e=>e.target.style.transform='translate(-1px,-1px)'} onMouseLeave={e=>e.target.style.transform='none'}>
+              <button onClick={leaveGame} style={{ background: '#fee2e2', border: '2px solid var(--border-dark)', color: '#b91c1c', padding: '6px 12px', borderRadius: 8, cursor: 'pointer', fontSize: '0.8rem', fontWeight: 800, boxShadow: '2px 2px 0px 0px var(--border-dark)', transition: 'all 0.1s' }} onMouseEnter={e=>e.target.style.transform='translate(-1px,-1px)'} onMouseLeave={e=>e.target.style.transform='none'}>
                 🏳️ Resign
               </button>
             </div>
